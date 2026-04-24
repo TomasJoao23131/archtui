@@ -1,5 +1,6 @@
 from textual.widgets import Static, Button, OptionList
 from textual.containers import Horizontal
+from textual.binding import Binding
 from installer.ui.sidebar import InstallerScreen
 
 
@@ -12,18 +13,21 @@ KEYBOARDS = [
 
 
 class KeyboardScreen(InstallerScreen):
-    """Passo 2 — Layout de teclado."""
+    """Passo 2 — Layout de teclado. Enter na lista avança."""
 
     STEP_NUMBER = 2
     STEP_NAME = "Teclado"
+
+    BINDINGS = [
+        Binding("escape", "go_back", "Voltar", show=False),
+    ]
 
     def compose(self):
         yield from self.compose_with_sidebar(
             Static("Passo 2 — Layout de Teclado", id="header-text"),
             Static(
-                "Escolha o layout de teclado para a consola do sistema.\n"
-                "Se usar um teclado brasileiro, escolha ABNT2.\n"
-                "Se usar um teclado português, escolha QWERTY (Portugal).",
+                "Escolha o layout de teclado para a consola.\n"
+                "Use ↑↓ para navegar e Enter para confirmar e avançar.",
                 classes="help-text",
             ),
             OptionList(*[kb[0] for kb in KEYBOARDS], id="keyboard-list"),
@@ -34,11 +38,18 @@ class KeyboardScreen(InstallerScreen):
             ),
         )
 
+    def on_option_list_option_selected(self, event: OptionList.OptionSelected) -> None:
+        if event.option_list.id == "keyboard-list":
+            self.app.config["keyboard"] = KEYBOARDS[event.option_index][1]
+            self.go_next("partition")
+
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "btn-next":
-            option_list = self.query_one("#keyboard-list", OptionList)
-            idx = option_list.highlighted if option_list.highlighted is not None else 0
+            idx = self.get_highlighted("#keyboard-list")
             self.app.config["keyboard"] = KEYBOARDS[idx][1]
             self.go_next("partition")
         elif event.button.id == "btn-back":
             self.go_back("language")
+
+    def action_go_back(self) -> None:
+        self.go_back("language")

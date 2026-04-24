@@ -1,16 +1,23 @@
 from textual.screen import Screen
 from textual.widgets import Static, Button
 from textual.containers import Container, Horizontal
+from textual.binding import Binding
 
 
 class WelcomeScreen(Screen):
-    """Ecrã de boas-vindas — sem sidebar, layout centrado."""
+    """Ecrã de boas-vindas — Enter inicia a instalação."""
+
+    BINDINGS = [
+        Binding("enter", "start", "Iniciar", show=False),
+        Binding("q", "quit_app", "Sair", show=False),
+    ]
 
     def compose(self):
         yield Container(
             Static(
+                "\n"
                 "    ⬡  ArchTUI\n"
-                "    ─────────────────────",
+                "    ─────────────────────\n",
                 id="welcome-logo",
             ),
             Static(
@@ -25,23 +32,25 @@ class WelcomeScreen(Screen):
                 id="welcome-text",
             ),
             Static(
-                "Controlos:\n"
-                "  ↑↓    Navegar entre opções\n"
-                "  Enter  Confirmar seleção\n"
-                "  Tab    Saltar entre campos\n"
-                "  q      Sair do instalador",
+                "Controlos:   Enter = Avançar  │  Tab = Navegar  │  q = Sair",
                 id="welcome-keys",
             ),
             Horizontal(
-                Button("Iniciar Instalação", id="btn-start", variant="primary"),
-                Button("Sair", id="btn-quit", variant="error"),
+                Button("▸ Iniciar Instalação  [Enter]", id="btn-start", variant="primary"),
+                Button("  Sair  [q]", id="btn-quit", variant="error"),
                 id="welcome-buttons",
             ),
             id="welcome-screen",
         )
 
+    def action_start(self) -> None:
+        self.app.switch_screen("language")
+
+    def action_quit_app(self) -> None:
+        self.app.exit()
+
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "btn-start":
-            self.app.switch_screen("language")
+            self.action_start()
         elif event.button.id == "btn-quit":
-            self.app.exit()
+            self.action_quit_app()

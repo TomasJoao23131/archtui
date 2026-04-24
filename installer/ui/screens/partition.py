@@ -1,19 +1,19 @@
 from textual.widgets import Static, Button, Input, OptionList
 from textual.containers import Horizontal
+from textual.binding import Binding
 from installer.core import detect_disks
 from installer.ui.sidebar import InstallerScreen
 
 
-PARTITION_METHODS = [
-    ("Automático (apaga todo o disco)", "auto"),
-]
-
-
 class PartitionScreen(InstallerScreen):
-    """Passo 3 — Particionamento do disco."""
+    """Passo 3 — Particionamento (requer confirmação, sem auto-avançar)."""
 
     STEP_NUMBER = 3
     STEP_NAME = "Partições"
+
+    BINDINGS = [
+        Binding("escape", "go_back", "Voltar", show=False),
+    ]
 
     def __init__(self):
         super().__init__()
@@ -21,7 +21,7 @@ class PartitionScreen(InstallerScreen):
 
     def compose(self):
         disk_options = (
-            [disk["label"] for disk in self._detected_disks]
+            [d["label"] for d in self._detected_disks]
             if self._detected_disks
             else ["Nenhum disco detetado"]
         )
@@ -29,27 +29,22 @@ class PartitionScreen(InstallerScreen):
         yield from self.compose_with_sidebar(
             Static("Passo 3 — Particionamento do Disco", id="header-text"),
             Static(
-                "Escolha como particionar o disco de destino.\n"
-                "De momento, apenas o modo automático está disponível.\n"
-                "O modo automático cria uma tabela GPT com:\n"
-                "  • UEFI: partição EFI (512 MB) + partição raiz\n"
-                "  • BIOS: partição BIOS boot (1 MB) + partição raiz",
+                "O modo automático cria uma tabela GPT:\n"
+                "  UEFI → EFI (512MB) + raiz  │  BIOS → boot (1MB) + raiz\n"
+                "Selecione o disco e confirme com APAGAR.",
                 classes="help-text",
             ),
-            Static("Método de particionamento:", classes="field-label"),
-            OptionList(*[m[0] for m in PARTITION_METHODS], id="partition-list"),
             Static("Disco de destino:", classes="field-label"),
             OptionList(*disk_options, id="disk-list"),
             Static(
-                "⚠  ATENÇÃO: O particionamento automático APAGA TODO o disco!\n"
-                "   Todos os dados serão perdidos permanentemente.\n"
-                "   Escreva APAGAR abaixo para confirmar.",
+                "⚠  ATENÇÃO: APAGA TODO o disco selecionado!\n"
+                "   Escreva APAGAR para confirmar:",
                 classes="danger-text",
             ),
-            Input(placeholder="Escreva APAGAR para confirmar", id="confirm-erase-input"),
+            Input(placeholder="Escreva APAGAR aqui", id="confirm-erase-input"),
             Horizontal(
                 Button("← Anterior", id="btn-back", variant="default"),
-                Button("Atualizar discos", id="btn-refresh", variant="default"),
+                Button("↻ Atualizar", id="btn-refresh", variant="default"),
                 Button("Seguinte →", id="btn-next", variant="primary"),
                 id="nav-buttons",
             ),
@@ -62,36 +57,30 @@ class PartitionScreen(InstallerScreen):
             return
 
         if event.button.id == "btn-next":
-            # Validar método
-            option_list = self.query_one("#partition-list", OptionList)
-            idx = option_list.highlighted if option_list.highlighted is not None else 0
-            partition_method = PARTITION_METHODS[idx][1]
-
-            # Validar disco
-            if not self._detected_disks:
-                self.notify("Nenhum disco detetado. Verifique a ligação.", severity="error")
-                return
-
-            disk_list = self.query_one("#disk-list", OptionList)
-            disk_idx = disk_list.highlighted if disk_list.highlighted is not None else 0
-            if disk_idx >= len(self._detected_disks):
-                self.notify("Selecione um disco válido.", severity="error")
-                return
-
-            # Validar confirmação
-            confirm_input = self.query_one("#confirm-erase-input", Input)
-            if confirm_input.value.strip().upper() != "APAGAR":
-                self.notify(
-                    "Escreva APAGAR para confirmar a destruição do disco.",
-                    severity="error",
-                )
-                return
-
-            selected_disk = self._detected_disks[disk_idx]
-            self.app.config["partition_method"] = partition_method
-            self.app.config["disk"] = selected_disk["path"]
-            self.app.config["disk_label"] = selected_disk["label"]
-            self.go_next("base")
-
+            self._try_advance()
         elif event.button.id == "btn-back":
             self.go_back("keyboard")
+
+    def _try_advance(self) -> None:
+        if not self._detected_disks:
+            self.notify("Nenhum disco detetado.", severity="error")
+            return
+
+        disk_idx = self.get_highlighted("#disk-list")
+        if disk_idx >= len(self._detected_disks):
+            self.notify("Selecione um disco válido.", severity="error")
+            return
+
+        confirm = self.query_one("#confirm-erase-input", Input)
+        if confirm.value.strip().upper() != "APAGAR":
+            self.notify("Escreva APAGAR para confirmar.", severity="error")
+            return
+
+        disk = self._detected_disks[disk_idx]
+        self.app.config["partition_method"] = "auto"
+        self.app.config["disk"] = disk["path"]
+        self.app.config["disk_label"] = disk["label"]
+        self.go_next("base")
+
+    def action_go_back(self) -> None:
+        self.go_back("keyboard")
