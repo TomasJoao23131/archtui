@@ -187,7 +187,18 @@ OptionList:focus {
 }
 
 OptionList > .option-list--option-highlighted {
-    background: #1793d140;
+    background: #1793d1;
+    color: #ffffff;
+    text-style: bold;
+}
+
+OptionList > .option-list--option-hover {
+    background: #21262d;
+    color: #c9d1d9;
+}
+
+OptionList > .option-list--option-hover-highlighted {
+    background: #1793d1;
     color: #ffffff;
     text-style: bold;
 }
@@ -200,6 +211,10 @@ ListView {
     border: round #30363d;
 }
 
+ListView:focus {
+    border: round #1793d1;
+}
+
 SelectionList {
     height: auto;
     max-height: 8;
@@ -210,6 +225,12 @@ SelectionList {
 
 SelectionList:focus {
     border: round #1793d1;
+}
+
+SelectionList > .selection-list--button-highlighted {
+    background: #1793d1;
+    color: #ffffff;
+    text-style: bold;
 }
 
 /* --- Inputs --- */
