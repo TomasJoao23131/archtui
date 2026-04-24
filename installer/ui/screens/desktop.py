@@ -1,55 +1,72 @@
 from textual.widgets import Static, Button, OptionList, Switch
-from textual.containers import Container, Horizontal
+from textual.containers import Horizontal
 from installer.ui.sidebar import InstallerScreen
 
 
 DESKTOPS = [
-    ("GNOME (Ambiente completo)", "gnome"),
-    ("KDE Plasma (KDE5)", "kde"),
-    ("XFCE (Leve)", "xfce"),
-    ("MATE (Classico)", "mate"),
-    ("Cinnamon", "cinnamon"),
-    ("Apenas CLI (Sem ambiente grafico)", "cli"),
+    ("GNOME (completo, moderno, muito usado)", "gnome"),
+    ("KDE Plasma (personalizável, visual elegante)", "kde"),
+    ("XFCE (leve e estável, bom para PCs antigos)", "xfce"),
+    ("MATE (clássico, baseado no GNOME 2)", "mate"),
+    ("Cinnamon (familiar, estilo Windows)", "cinnamon"),
+    ("Apenas CLI (sem interface gráfica)", "cli"),
 ]
 
 VIDEO_DRIVERS = [
-    ("Automatico (detectado)", "auto"),
-    ("Intel (i915)", "intel"),
-    ("AMD (amdgpu)", "amd"),
-    ("NVIDIA (proprietario)", "nvidia"),
-    ("VMware / VirtualBox", "vm"),
+    ("Automático (deteção genérica)", "auto"),
+    ("Intel (placas integradas Intel)", "intel"),
+    ("AMD (Radeon / integradas AMD)", "amd"),
+    ("NVIDIA (driver proprietário)", "nvidia"),
+    ("VMware / VirtualBox (máquina virtual)", "vm"),
 ]
 
 
 class DesktopScreen(InstallerScreen):
+    """Passo 7 — Ambiente de trabalho e drivers de vídeo."""
+
     STEP_NUMBER = 7
     STEP_NAME = "Ambiente"
 
     def compose(self):
-        content = Container(
-            Static("Selecionar Ambiente de Trabalho", id="header-text"),
-            OptionList(*[d[0] for d in DESKTOPS], id="desktop-list"),
-            Static("Drivers de video:", id="video-label"),
-            OptionList(*[driver[0] for driver in VIDEO_DRIVERS], id="video-driver-list"),
-            Switch(True, id="multilib-switch"),
-            Static("Habilitar repositorio multilib (32-bit)", id="multilib-label"),
-            Horizontal(
-                Button("Anterior", id="btn-back", variant="default"),
-                Button("Seguinte", id="btn-next", variant="primary"),
-                id="nav-buttons"
+        yield from self.compose_with_sidebar(
+            Static("Passo 7 — Ambiente de Trabalho", id="header-text"),
+            Static(
+                "Escolha o ambiente gráfico a instalar.\n"
+                "Se não tiver a certeza, GNOME ou KDE Plasma são boas opções.\n"
+                "Escolha 'Apenas CLI' se quiser um servidor sem interface gráfica.",
+                classes="help-text",
             ),
-            id="desktop-container"
+            Static("Ambiente de trabalho:", classes="field-label"),
+            OptionList(*[d[0] for d in DESKTOPS], id="desktop-list"),
+            Static("Driver de vídeo:", classes="field-label"),
+            OptionList(*[d[0] for d in VIDEO_DRIVERS], id="video-driver-list"),
+            Horizontal(
+                Switch(True, id="multilib-switch"),
+                Static(
+                    "  Ativar repositório multilib (pacotes 32-bit, necessário para jogos/Wine)",
+                    classes="field-label",
+                ),
+                classes="switch-row",
+            ),
+            Horizontal(
+                Button("← Anterior", id="btn-back", variant="default"),
+                Button("Seguinte →", id="btn-next", variant="primary"),
+                id="nav-buttons",
+            ),
         )
-        yield from self.compose_with_sidebar(content)
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "btn-next":
-            desktop_index = self.get_highlighted_index("#desktop-list")
-            driver_index = self.get_highlighted_index("#video-driver-list")
+            desktop_list = self.query_one("#desktop-list", OptionList)
+            driver_list = self.query_one("#video-driver-list", OptionList)
             multilib_switch = self.query_one("#multilib-switch", Switch)
-            self.app.config["desktop"] = DESKTOPS[desktop_index][1]
-            self.app.config["video_driver"] = VIDEO_DRIVERS[driver_index][1]
+
+            d_idx = desktop_list.highlighted if desktop_list.highlighted is not None else 0
+            v_idx = driver_list.highlighted if driver_list.highlighted is not None else 0
+
+            self.app.config["desktop"] = DESKTOPS[d_idx][1]
+            self.app.config["video_driver"] = VIDEO_DRIVERS[v_idx][1]
             self.app.config["multilib"] = multilib_switch.value
-            self.app.push_screen("summary")
+            self.go_next("summary")
         elif event.button.id == "btn-back":
-            self.app.pop_screen()
+            self.go_back("user")

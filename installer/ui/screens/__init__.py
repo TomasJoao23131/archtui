@@ -8,3 +8,16 @@ from installer.ui.screens.user import UserScreen
 from installer.ui.screens.desktop import DesktopScreen
 from installer.ui.screens.summary import SummaryScreen
 from installer.ui.screens.installation import InstallationScreen
+
+__all__ = [
+    "WelcomeScreen",
+    "LanguageScreen",
+    "KeyboardScreen",
+    "PartitionScreen",
+    "BaseSystemScreen",
+    "BootloaderScreen",
+    "UserScreen",
+    "DesktopScreen",
+    "SummaryScreen",
+    "InstallationScreen",
+]

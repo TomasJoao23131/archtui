@@ -1,4 +1,3 @@
-from installer.ui.screens import WelcomeScreen, LanguageScreen, KeyboardScreen
-from installer.ui.sidebar import Sidebar
+from installer.ui.sidebar import Sidebar, InstallerScreen
 
-__all__ = ["WelcomeScreen", "LanguageScreen", "KeyboardScreen", "Sidebar"]
+__all__ = ["Sidebar", "InstallerScreen"]

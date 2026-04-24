@@ -1,54 +1,85 @@
 from textual.containers import Container
+from textual.reactive import reactive
 from textual.screen import Screen
-from textual.widgets import OptionList, SelectionList, Static
+from textual.widgets import Static
 
 
-STEPS_SIDEBAR = [
-    "1. Idioma",
-    "2. Teclado",
-    "3. Partições",
-    "4. Sistema Base",
-    "5. Bootloader",
-    "6. Utilizador",
-    "7. Ambiente",
-    "8. Resumo",
-    "9. Instalação",
+STEPS = [
+    (1, "Idioma"),
+    (2, "Teclado"),
+    (3, "Partições"),
+    (4, "Sistema Base"),
+    (5, "Bootloader"),
+    (6, "Utilizador"),
+    (7, "Ambiente"),
+    (8, "Resumo"),
+    (9, "Instalação"),
 ]
 
 
 class Sidebar(Container):
-    def __init__(self, state: dict, **kwargs):
+    """Barra lateral com progresso visual. Atualiza automaticamente."""
+
+    current_step = reactive(0)
+
+    def __init__(self, step: int = 0, **kwargs):
         super().__init__(**kwargs)
-        self.state = state
+        self.current_step = step
 
     def compose(self):
-        yield Static("ArchTUI", id="sidebar-title")
-        yield Static("Progresso", id="sidebar-subtitle")
-        for i, step in enumerate(STEPS_SIDEBAR, 1):
-            is_active = self.state.get("step", 0) == i
-            is_completed = self.state.get("step", 0) > i
-            marker = "[✓]" if is_completed else "[ ]" if not is_active else "[>"
-            yield Static(f"{marker} {step}", id=f"step-{i}")
+        yield Static("  ⬡  ArchTUI", id="sidebar-title")
+        yield Static("─" * 26, id="sidebar-subtitle")
+        for number, name in STEPS:
+            widget = Static(self._format_step(number, name), id=f"step-{number}")
+            widget.add_class("step-item")
+            widget.add_class(self._step_class(number))
+            yield widget
+
+    def update_step(self, step: int) -> None:
+        """Atualiza o passo atual e re-renderiza os marcadores."""
+        self.current_step = step
+        for number, name in STEPS:
+            try:
+                widget = self.query_one(f"#step-{number}", Static)
+                widget.update(self._format_step(number, name))
+                widget.remove_class("step-completed", "step-active", "step-pending")
+                widget.add_class(self._step_class(number))
+            except Exception:
+                pass
+
+    def _format_step(self, number: int, name: str) -> str:
+        if number < self.current_step:
+            return f"  ✓  {number}. {name}"
+        elif number == self.current_step:
+            return f"  ▸  {number}. {name}"
+        else:
+            return f"  ○  {number}. {name}"
+
+    def _step_class(self, number: int) -> str:
+        if number < self.current_step:
+            return "step-completed"
+        elif number == self.current_step:
+            return "step-active"
+        return "step-pending"
 
 
 class InstallerScreen(Screen):
+    """Ecrã base para todos os passos do instalador."""
+
     STEP_NUMBER = 0
     STEP_NAME = ""
 
-    def set_current_step(self) -> None:
-        if self.STEP_NUMBER:
-            self.app.state["step"] = self.STEP_NUMBER
-            self.app.state["step_name"] = self.STEP_NAME
+    def go_next(self, screen_name: str) -> None:
+        """Avança para o próximo ecrã sem empilhar."""
+        self.app.switch_screen(screen_name)
 
-    def get_highlighted_index(self, selector: str) -> int:
-        option_list = self.query_one(selector, OptionList)
-        return option_list.highlighted if option_list.highlighted is not None else 0
+    def go_back(self, screen_name: str) -> None:
+        """Volta ao ecrã anterior sem empilhar."""
+        self.app.switch_screen(screen_name)
 
-    def get_selected_values(self, selector: str) -> list:
-        selection_list = self.query_one(selector, SelectionList)
-        return list(selection_list.selected)
-
-    def compose_with_sidebar(self, content: Container):
-        self.set_current_step()
-        yield Sidebar(self.app.state, id="sidebar")
-        yield Container(content, id="main")
+    def compose_with_sidebar(self, *content_widgets):
+        """Monta o layout sidebar + conteúdo principal e atualiza o passo."""
+        self.app.state["step"] = self.STEP_NUMBER
+        sidebar = Sidebar(step=self.STEP_NUMBER, id="sidebar")
+        yield sidebar
+        yield Container(*content_widgets, id="main")
