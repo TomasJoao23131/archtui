@@ -1,4 +1,4 @@
-from textual.widgets import Static, Button, OptionList
+from textual.widgets import Static, Button, RadioSet, RadioButton
 from textual.containers import Horizontal
 from textual.binding import Binding
 from installer.ui.sidebar import InstallerScreen
@@ -13,8 +13,6 @@ LANGUAGES = [
 
 
 class LanguageScreen(InstallerScreen):
-    """Passo 1 — Enter na lista avança automaticamente."""
-
     STEP_NUMBER = 1
     STEP_NAME = "Idioma"
 
@@ -24,30 +22,30 @@ class LanguageScreen(InstallerScreen):
 
     def compose(self):
         yield from self.compose_with_sidebar(
-            Static("Passo 1 — Selecionar Idioma", id="header-text"),
+            Static("Idioma do sistema", id="header-text"),
             Static(
-                "Escolha o idioma do sistema (define locale: datas, números, mensagens).\n"
-                "Use ↑↓ para navegar e Enter para confirmar e avançar.",
+                "Escolha o idioma que será configurado no sistema instalado.\n"
+                "Isto define o locale (formato de datas, números e mensagens).",
                 classes="help-text",
             ),
-            OptionList(*[lang[0] for lang in LANGUAGES], id="language-list"),
+            RadioSet(
+                *[RadioButton(lang[0], id=f"lang-{i}") for i, lang in enumerate(LANGUAGES)],
+                id="language-list",
+            ),
             Horizontal(
-                Button("← Início", id="btn-back", variant="default"),
+                Button("← Anterior", id="btn-back", variant="default"),
                 Button("Seguinte →", id="btn-next", variant="primary"),
                 id="nav-buttons",
             ),
         )
 
-    def on_option_list_option_selected(self, event: OptionList.OptionSelected) -> None:
-        """Enter na lista = guarda e avança."""
-        if event.option_list.id == "language-list":
-            idx = event.option_index
-            self.app.config["language"] = LANGUAGES[idx][1]
-            self.go_next("keyboard")
+    def on_mount(self):
+        # Selecionar o primeiro por defeito
+        self.query_one("#lang-0", RadioButton).value = True
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "btn-next":
-            idx = self.get_highlighted("#language-list")
+            idx = self.get_radio_index("#language-list")
             self.app.config["language"] = LANGUAGES[idx][1]
             self.go_next("keyboard")
         elif event.button.id == "btn-back":

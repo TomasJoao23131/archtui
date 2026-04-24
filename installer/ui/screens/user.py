@@ -5,8 +5,6 @@ from installer.ui.sidebar import InstallerScreen
 
 
 class UserScreen(InstallerScreen):
-    """Passo 6 — Dados do utilizador."""
-
     STEP_NUMBER = 6
     STEP_NAME = "Utilizador"
 
@@ -16,24 +14,21 @@ class UserScreen(InstallerScreen):
 
     def compose(self):
         yield from self.compose_with_sidebar(
-            Static("Passo 6 — Utilizador", id="header-text"),
-            Static(
-                "Crie a conta principal. Tab para navegar entre campos.",
-                classes="help-text",
-            ),
-            Static("Nome de utilizador:", classes="field-label"),
+            Static("Configuração do Utilizador", id="header-text"),
+            Static("Cria a tua conta principal. Usa [Tab] para mudar de campo.", classes="help-text"),
+            Static("Nome de utilizador (sem espaços, minúsculas):", classes="field-label"),
             Input(placeholder="utilizador", id="username-input"),
             Static("Palavra-passe:", classes="field-label"),
-            Input(placeholder="", id="password-input", password=True),
+            Input(placeholder="Palavra-passe...", id="password-input", password=True),
             Static("Confirmar palavra-passe:", classes="field-label"),
-            Input(placeholder="", id="password-confirm-input", password=True),
+            Input(placeholder="Repetir palavra-passe...", id="password-confirm-input", password=True),
             Horizontal(
                 Switch(True, id="sudo-switch"),
-                Static("  Conceder sudo (recomendado)", classes="field-label"),
+                Static("  Conceder privilégios sudo (recomendado)", classes="field-label"),
                 classes="switch-row",
             ),
-            Static("Password root (vazio = mesma):", classes="field-label"),
-            Input(placeholder="(mesma do utilizador)", id="root-password-input", password=True),
+            Static("Palavra-passe root (deixa vazio para usar a mesma do utilizador):", classes="field-label"),
+            Input(placeholder="(mesma do utilizador se vazio)", id="root-password-input", password=True),
             Horizontal(
                 Button("← Anterior", id="btn-back", variant="default"),
                 Button("Seguinte →", id="btn-next", variant="primary"),

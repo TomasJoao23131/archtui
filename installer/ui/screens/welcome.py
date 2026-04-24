@@ -5,7 +5,7 @@ from textual.binding import Binding
 
 
 class WelcomeScreen(Screen):
-    """Ecrã de boas-vindas — Enter inicia a instalação."""
+    """Ecrã inicial — Enter ou clique para começar."""
 
     BINDINGS = [
         Binding("enter", "start", "Iniciar", show=False),
@@ -16,28 +16,24 @@ class WelcomeScreen(Screen):
         yield Container(
             Static(
                 "\n"
-                "    ⬡  ArchTUI\n"
-                "    ─────────────────────\n",
+                "     ⬡  ArchTUI\n"
+                "     ─────────────────\n",
                 id="welcome-logo",
             ),
             Static(
-                "Bem-vindo ao instalador do Arch Linux!\n\n"
-                "Este assistente vai guiá-lo passo a passo na instalação\n"
-                "completa do Arch Linux no seu computador.\n\n"
-                "Serão 9 passos simples:\n"
-                "  Idioma → Teclado → Partições → Sistema Base →\n"
-                "  Bootloader → Utilizador → Ambiente → Resumo → Instalar\n\n"
-                "Pode voltar atrás em qualquer momento.\n"
-                "Nenhuma alteração será feita até confirmar no passo final.",
+                "Instalador do Arch Linux com interface gráfica.\n\n"
+                "9 passos simples para instalar o Arch Linux.\n"
+                "Pode usar o rato ou o teclado para navegar.\n"
+                "Nenhuma alteração é feita até ao passo final.",
                 id="welcome-text",
             ),
             Static(
-                "Controlos:   Enter = Avançar  │  Tab = Navegar  │  q = Sair",
+                "[Enter] Iniciar  │  [q] Sair  │  [Mouse] Clicável",
                 id="welcome-keys",
             ),
             Horizontal(
-                Button("▸ Iniciar Instalação  [Enter]", id="btn-start", variant="primary"),
-                Button("  Sair  [q]", id="btn-quit", variant="error"),
+                Button("Iniciar Instalação", id="btn-start", variant="primary"),
+                Button("Sair", id="btn-quit", variant="error"),
                 id="welcome-buttons",
             ),
             id="welcome-screen",

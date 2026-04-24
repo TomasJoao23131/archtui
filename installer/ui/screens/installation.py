@@ -8,13 +8,13 @@ from installer.ui.sidebar import InstallerScreen
 
 class InstallationScreen(InstallerScreen):
     STEP_NUMBER = 9
-    STEP_NAME = "Instalação"
+    STEP_NAME = "Instalar"
     BINDINGS = [Binding("q", "quit", "Sair", show=False)]
 
     def compose(self):
         yield from self.compose_with_sidebar(
-            Static("Passo 9 — A Instalar...", id="header-text"),
-            Static("Não desligue o computador.", classes="help-text"),
+            Static("A instalar...", id="header-text"),
+            Static("Não desligue o computador. A aguardar...", classes="help-text"),
             ProgressBar(id="progress", total=100),
             Static("A preparar...", id="status-text"),
             Static("", id="detail-text"),

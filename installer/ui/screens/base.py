@@ -18,10 +18,8 @@ PACKAGES_EXTRAS = [
 
 
 class BaseSystemScreen(InstallerScreen):
-    """Passo 4 — Hostname e pacotes."""
-
     STEP_NUMBER = 4
-    STEP_NAME = "Sistema Base"
+    STEP_NAME = "Sistema base"
 
     BINDINGS = [
         Binding("escape", "go_back", "Voltar", show=False),
@@ -29,20 +27,20 @@ class BaseSystemScreen(InstallerScreen):
 
     def compose(self):
         yield from self.compose_with_sidebar(
-            Static("Passo 4 — Sistema Base", id="header-text"),
+            Static("Sistema Base", id="header-text"),
             Static(
-                "Defina o hostname e escolha pacotes extras.\n"
-                "Tab para navegar entre campos. Espaço para selecionar extras.",
+                "Define o nome do computador (hostname) e escolhe pacotes extra.\n"
+                "Usa [Espaço] ou o rato para selecionar pacotes adicionais.",
                 classes="help-text",
             ),
-            Static("Hostname (nome na rede):", classes="field-label"),
+            Static("Hostname (nome do pc na rede):", classes="field-label"),
             Input(placeholder="archlinux", id="hostname-input", value="archlinux"),
-            Static("Pacotes base (sempre instalados):", classes="field-label"),
+            Static("Pacotes base (instalados automaticamente):", classes="field-label"),
             Container(
                 *[Static(f" • {p}", classes="package-item") for p in PACKAGES_BASE],
                 id="packages-box",
             ),
-            Static("Extras (Espaço = selecionar):", classes="field-label"),
+            Static("Pacotes adicionais (opcional):", classes="field-label"),
             SelectionList(*PACKAGES_EXTRAS, id="extras-list"),
             Horizontal(
                 Button("← Anterior", id="btn-back", variant="default"),

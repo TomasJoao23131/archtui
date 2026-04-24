@@ -1,4 +1,4 @@
-from textual.widgets import Static, Button, Input, OptionList
+from textual.widgets import Static, Button, Input, RadioSet, RadioButton
 from textual.containers import Horizontal
 from textual.binding import Binding
 from installer.core import detect_disks
@@ -6,8 +6,6 @@ from installer.ui.sidebar import InstallerScreen
 
 
 class PartitionScreen(InstallerScreen):
-    """Passo 3 — Particionamento (requer confirmação, sem auto-avançar)."""
-
     STEP_NUMBER = 3
     STEP_NAME = "Partições"
 
@@ -20,35 +18,51 @@ class PartitionScreen(InstallerScreen):
         self._detected_disks = detect_disks()
 
     def compose(self):
-        disk_options = (
-            [d["label"] for d in self._detected_disks]
-            if self._detected_disks
-            else ["Nenhum disco detetado"]
-        )
-
         yield from self.compose_with_sidebar(
-            Static("Passo 3 — Particionamento do Disco", id="header-text"),
+            Static("Esquema de partições", id="header-text"),
             Static(
-                "O modo automático cria uma tabela GPT:\n"
-                "  UEFI → EFI (512MB) + raiz  │  BIOS → boot (1MB) + raiz\n"
-                "Selecione o disco e confirme com APAGAR.",
+                "Escolhe como queres organizar o disco. O modo automático\n"
+                "cria uma tabela GPT com UEFI ou BIOS boot e partição raiz.",
                 classes="help-text",
             ),
-            Static("Disco de destino:", classes="field-label"),
-            OptionList(*disk_options, id="disk-list"),
-            Static(
-                "⚠  ATENÇÃO: APAGA TODO o disco selecionado!\n"
-                "   Escreva APAGAR para confirmar:",
-                classes="danger-text",
+            RadioSet(
+                RadioButton("Automático (recomendado) - Apaga o disco", id="part-0", value=True),
+                id="partition-list",
             ),
-            Input(placeholder="Escreva APAGAR aqui", id="confirm-erase-input"),
+            Static("Disco de destino:", classes="field-label"),
+            self._build_disk_radios(),
+            Static(
+                "NOTA\n"
+                "O particionamento automático APAGA TODO o disco selecionado.\n"
+                "Escreve APAGAR na caixa abaixo para confirmar a destruição dos dados.",
+                classes="note-box",
+            ),
+            Input(placeholder="Escreve APAGAR para confirmar...", id="confirm-erase-input"),
             Horizontal(
                 Button("← Anterior", id="btn-back", variant="default"),
-                Button("↻ Atualizar", id="btn-refresh", variant="default"),
+                Button("↻ Atualizar Discos", id="btn-refresh", variant="default"),
                 Button("Seguinte →", id="btn-next", variant="primary"),
                 id="nav-buttons",
             ),
         )
+
+    def _build_disk_radios(self):
+        radios = []
+        if self._detected_disks:
+            for i, d in enumerate(self._detected_disks):
+                radios.append(RadioButton(d["label"], id=f"disk-{i}"))
+        else:
+            radios.append(RadioButton("Nenhum disco detetado", id="disk-0", disabled=True))
+        
+        rs = RadioSet(*radios, id="disk-list")
+        return rs
+
+    def on_mount(self):
+        if self._detected_disks:
+            try:
+                self.query_one("#disk-0", RadioButton).value = True
+            except Exception:
+                pass
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "btn-refresh":
@@ -66,14 +80,14 @@ class PartitionScreen(InstallerScreen):
             self.notify("Nenhum disco detetado.", severity="error")
             return
 
-        disk_idx = self.get_highlighted("#disk-list")
+        disk_idx = self.get_radio_index("#disk-list")
         if disk_idx >= len(self._detected_disks):
             self.notify("Selecione um disco válido.", severity="error")
             return
 
         confirm = self.query_one("#confirm-erase-input", Input)
         if confirm.value.strip().upper() != "APAGAR":
-            self.notify("Escreva APAGAR para confirmar.", severity="error")
+            self.notify("Escreve APAGAR para confirmar.", severity="error")
             return
 
         disk = self._detected_disks[disk_idx]
