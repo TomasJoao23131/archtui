@@ -137,7 +137,7 @@ class ArchInstaller:
 
     def _prepare_partition_layout(self) -> None:
         disk = self.config["disk"]
-        suffix = "p" if disk.startswith("/dev/nvme") or disk.startswith("/dev/mmcblk") else ""
+        suffix = "p" if disk[-1].isdigit() else ""
         if self._is_uefi():
             self.efi_partition = f"{disk}{suffix}1"
             self.root_partition = f"{disk}{suffix}2"
@@ -252,6 +252,7 @@ class ArchInstaller:
         if self.config.get("sudo"):
             sudoers_path = self.mountpoint / "etc/sudoers.d/10-wheel"
             sudoers_path.write_text("%wheel ALL=(ALL:ALL) ALL\n", encoding="utf-8")
+            self._chroot("chmod 440 /etc/sudoers.d/10-wheel")
         self._chroot("chpasswd", input_text=f"root:{root_password}\n")
         self._chroot("chpasswd", input_text=f"{username}:{user_password}\n")
 

@@ -1,112 +1,117 @@
-# ArchTUI
+<div align="center">
+  <h1>🚀 ArchTUI</h1>
+  <p><b>Instalador do Arch Linux com interface TUI interativa em português.</b></p>
+</div>
 
-Instalador do Arch Linux com interface TUI interativa em português.
+---
 
-## O que é?
+## 📖 O que é?
 
-O ArchTUI é um instalador guiado do Arch Linux que corre no terminal.
-Em 9 passos simples, configura e instala o Arch Linux no seu computador,
-sem precisar de memorizar comandos.
+O **ArchTUI** é um instalador guiado do Arch Linux que corre diretamente no terminal.
+Em **9 passos simples**, ele configura e instala o Arch Linux no seu computador, de forma visual, amigável e sem a necessidade de memorizar dezenas de comandos complexos.
 
-## Funcionalidades
+## ✨ Funcionalidades
 
-- Interface TUI moderna usando [Textual](https://textual.textualize.io/)
-- Navegação por teclado e rato
-- Guia passo a passo com explicações claras em cada ecrã
-- Barra lateral com progresso visual (✓ completo, ▸ atual, ○ pendente)
-- Deteção automática de discos com `lsblk`
-- Instalação real com `sgdisk`, `pacstrap`, `genfstab` e `arch-chroot`
+- 🎨 **Interface TUI moderna** utilizando a excelente biblioteca [Textual](https://textual.textualize.io/)
+- 🖱️ **Navegação versátil** suportando teclado e rato
+- 📚 **Guia passo a passo** com explicações claras em cada ecrã
+- 📊 **Barra lateral** com progresso visual (✓ completo, ▸ atual, ○ pendente)
+- 💽 **Deteção automática de discos** recorrendo ao `lsblk`
+- ⚙️ **Instalação real e automatizada** via `sgdisk`, `pacstrap`, `genfstab` e `arch-chroot`
 
-## Os 9 Passos
+## 🛤️ Os 9 Passos da Instalação
 
 | Passo | O que configura |
-|-------|-----------------|
-| 1. Idioma | Locale do sistema (pt_BR, pt_PT, en_US, es_ES) |
-| 2. Teclado | Layout da consola (ABNT2, QWERTY PT, US, ES) |
-| 3. Partições | Disco alvo + particionamento automático GPT |
-| 4. Sistema Base | Hostname + pacotes base + extras opcionais |
-| 5. Bootloader | GRUB, systemd-boot ou rEFInd |
-| 6. Utilizador | Nome, palavra-passe, sudo, root password |
-| 7. Ambiente | Desktop (GNOME/KDE/XFCE/etc.) + driver de vídeo |
-| 8. Resumo | Revisão de tudo antes de instalar |
-| 9. Instalação | Execução real com progresso e logs |
+|:-----:|-----------------|
+| **1** | 🌍 **Idioma:** Locale do sistema (pt_BR, pt_PT, en_US, es_ES) |
+| **2** | ⌨️ **Teclado:** Layout da consola (ABNT2, QWERTY PT, US, ES) |
+| **3** | 💽 **Partições:** Disco alvo + particionamento automático GPT |
+| **4** | 📦 **Sistema Base:** Hostname + pacotes base + extras opcionais |
+| **5** | 🥾 **Bootloader:** GRUB, systemd-boot ou rEFInd |
+| **6** | 👤 **Utilizador:** Nome, palavra-passe, sudo, root password |
+| **7** | 🖥️ **Ambiente:** Desktop (GNOME, KDE, XFCE, etc.) + driver de vídeo |
+| **8** | 📋 **Resumo:** Revisão completa de todas as configurações |
+| **9** | 🚀 **Instalação:** Execução real com barra de progresso e logs detalhados |
 
-## Instalação
+## 🚀 Instalação e Uso
 
-No live environment do Arch Linux:
+Inicie o computador com a pen drive do **live environment** oficial do Arch Linux. Assim que o terminal abrir, execute um dos métodos abaixo:
 
+### Método 1: Download Rápido (Recomendado)
+Faça o download do script e execute diretamente:
 ```bash
-# Opção 1: Clonar e correr
-git clone https://github.com/SEU_USUARIO/archtui.git
+ARCHTUI_REPO_URL=https://github.com/TomasJoao23131/archtui.git \
+  curl -sL https://raw.githubusercontent.com/TomasJoao23131/archtui/main/install.sh | sudo bash
+```
+
+### Método 2: Clonar o Repositório Manualmente
+Se preferir, pode clonar e inspecionar o código antes de executar:
+```bash
+git clone https://github.com/TomasJoao23131/archtui.git
 cd archtui
 sudo ./install.sh
-
-# Opção 2: Usar curl (defina o URL do repositório)
-ARCHTUI_REPO_URL=https://github.com/SEU_USUARIO/archtui.git \
-  curl -sL https://raw.githubusercontent.com/SEU_USUARIO/archtui/main/install.sh | sudo bash
 ```
 
-> **Nota:** Substitua `SEU_USUARIO` pelo seu nome de utilizador no GitHub.
+## 📂 Estrutura do Projeto
 
-## Estrutura
-
-```
+```text
 archtui/
-├── run.py                      # Ponto de entrada
-├── install.sh                  # Script de instalação e arranque
-├── requirements.txt            # Dependência: textual>=0.50.0
+├── run.py                      # Ponto de entrada rápido
+├── install.sh                  # Script de instalação e arranque (Bootstrapper)
+├── requirements.txt            # Dependências Python (textual>=0.50.0)
 └── installer/
-    ├── main.py                 # App principal (ArchTUI)
+    ├── main.py                 # App principal (Classe ArchTUI)
     ├── core/
-    │   └── arch_installer.py   # Motor de instalação real
+    │   └── arch_installer.py   # Motor e comandos de instalação reais
     └── ui/
-        ├── styles.tcss         # Estilos visuais (tema Arch)
-        ├── sidebar.py          # Sidebar reativa + InstallerScreen
-        └── screens/
-            ├── welcome.py      # Boas-vindas
-            ├── language.py     # Passo 1 — Idioma
-            ├── keyboard.py     # Passo 2 — Teclado
-            ├── partition.py    # Passo 3 — Partições
-            ├── base.py         # Passo 4 — Sistema Base
-            ├── bootloader.py   # Passo 5 — Bootloader
-            ├── user.py         # Passo 6 — Utilizador
-            ├── desktop.py      # Passo 7 — Ambiente
-            ├── summary.py      # Passo 8 — Resumo
-            └── installation.py # Passo 9 — Instalação
+        ├── styles.tcss         # Estilos visuais e temas (CSS-like)
+        ├── sidebar.py          # Sidebar reativa + Lógica de InstallerScreen
+        └── screens/            # Diferentes ecrãs da aplicação
+            ├── welcome.py      # Ecrã Inicial
+            ├── language.py     # Passo 1
+            ├── keyboard.py     # Passo 2
+            ├── partition.py    # Passo 3
+            ├── base.py         # Passo 4
+            ├── bootloader.py   # Passo 5
+            ├── user.py         # Passo 6
+            ├── desktop.py      # Passo 7
+            ├── summary.py      # Passo 8
+            └── installation.py # Passo 9
 ```
 
-## Requisitos
+## 📋 Requisitos para uso standalone
 
-- Arch Linux (live environment)
-- Python 3.10+
-- Biblioteca Textual (`pip install textual`)
+Caso queira testar a interface num sistema já instalado (modo simulação/teste UI):
+- Python 3.10 ou superior
+- Biblioteca Textual: `pip install textual`
+*(O `install.sh` instala tudo automaticamente no live environment).*
 
-## Controlos
+## 🎮 Controlos da Interface
 
-| Tecla | Ação |
-|-------|------|
-| ↑ ↓ | Navegar entre opções |
-| Enter | Confirmar seleção |
-| Tab | Saltar entre campos |
-| q | Sair do instalador |
-| Rato | Clicar em botões e opções |
+| Tecla / Ação | Função |
+|-------------|--------|
+| `↑` / `↓`   | Navegar entre opções numa lista |
+| `Enter`     | Confirmar seleção atual |
+| `Tab`       | Saltar entre os diferentes campos no ecrã |
+| `q`         | Cancelar e sair do instalador |
+| `Rato`      | Clicar livremente em botões, abas e listas |
 
-## Suportado
+## ✅ O que é suportado
 
-- Instalação completa no liveboot oficial do Arch
-- Particionamento automático com apagamento total do disco
-- GPT automático (UEFI ou BIOS legacy)
-- UEFI: partição EFI (512 MB) + raiz
-- BIOS: partição BIOS boot (1 MB) + raiz
-- Bootloaders: GRUB (UEFI/BIOS), systemd-boot (UEFI), rEFInd (UEFI)
-- Ambientes: GNOME, KDE Plasma, XFCE, MATE, Cinnamon, CLI
-- Drivers de vídeo: auto, Intel, AMD, NVIDIA, VM
-- Criação de utilizador, sudo, passwords, hostname, locale, keymap
-- Ativação automática do NetworkManager
+- **Instalação completa** dentro do liveboot oficial do Arch Linux.
+- **Particionamento automático** (apaga todo o disco e cria o esquema ideal).
+- **GPT Automático** suportado tanto em sistemas UEFI como BIOS/Legacy.
+  - *UEFI:* Partição EFI (512 MB) + Raiz.
+  - *BIOS:* Partição BIOS boot (1 MB) + Raiz.
+- **Bootloaders:** GRUB (ambos UEFI/BIOS), systemd-boot (apenas UEFI), rEFInd (apenas UEFI).
+- **Ambientes Desktop:** GNOME, KDE Plasma, XFCE, MATE, Cinnamon, ou Modo CLI (Sem desktop).
+- **Drivers de Vídeo:** Auto-deteção, Intel, AMD, NVIDIA, Virtual Machine (VMware/VirtualBox).
+- Criação de utilizador, privilégios `sudo`, configuração de senhas, hostname, locale e keymap da consola.
+- **Ativação automática** do `NetworkManager` após instalar a interface.
 
-## Limitações
+## 🚧 Limitações Atuais
 
-- Particionamento manual ainda não implementado
-- Não cria partição swap automaticamente
-- Timezone fixo em UTC
-- Requer ligação à internet no live environment
+- **Particionamento Manual:** Ainda não implementado (usar auto particionamento).
+- **Swap:** Atualmente o script não cria partição `swap` automaticamente.
+- **Timezone:** Encontra-se fixo em `UTC` por predefinição.
+- **Ligação à Internet:** Obrigatória no live environment (via cabo ou Wi-Fi através de `iwctl`).

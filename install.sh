@@ -21,7 +21,7 @@ if [[ ! -f "$SCRIPT_DIR/run.py" || ! -f "$SCRIPT_DIR/requirements.txt" ]]; then
 
     if [[ -z "${ARCHTUI_REPO_URL:-}" ]]; then
         echo "Erro: Defina ARCHTUI_REPO_URL com o URL do repositório."
-        echo "  Exemplo: ARCHTUI_REPO_URL=https://github.com/user/archtui.git ./install.sh"
+        echo "  Exemplo: ARCHTUI_REPO_URL=https://github.com/TomasJoao23131/archtui.git ./install.sh"
         exit 1
     fi
 
@@ -46,7 +46,7 @@ PYTHON_BIN="$(command -v python3 || command -v python)"
 # Instalar dependências Python se necessário
 if ! "$PYTHON_BIN" -m pip show textual >/dev/null 2>&1; then
     echo "A instalar dependências Python..."
-    "$PYTHON_BIN" -m pip install -r "$SCRIPT_DIR/requirements.txt"
+    "$PYTHON_BIN" -m pip install --break-system-packages -r "$SCRIPT_DIR/requirements.txt"
 fi
 
 echo ""

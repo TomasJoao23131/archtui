@@ -46,6 +46,9 @@ class SummaryScreen(InstallerScreen):
             ),
         )
 
+    def on_screen_resume(self) -> None:
+        self.recompose()
+
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "btn-back":
             self.go_back("desktop")

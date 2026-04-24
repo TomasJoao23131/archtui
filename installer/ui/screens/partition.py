@@ -67,7 +67,7 @@ class PartitionScreen(InstallerScreen):
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "btn-refresh":
             self._detected_disks = detect_disks()
-            self.app.switch_screen("partition")
+            self.recompose()
             return
 
         if event.button.id == "btn-next":
