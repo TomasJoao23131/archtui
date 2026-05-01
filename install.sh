@@ -49,8 +49,26 @@ if ! "$PYTHON_BIN" -m pip show textual >/dev/null 2>&1; then
     "$PYTHON_BIN" -m pip install --break-system-packages -r "$SCRIPT_DIR/requirements.txt"
 fi
 
+# ── Preparar o terminal para Unicode e cores ──
+# O tty básico do Arch live não suporta Unicode por defeito.
+# Precisamos de uma fonte que tenha os caracteres especiais (bordas, setas, etc.)
+if [[ "$(tty)" == /dev/tty* ]]; then
+    # Instalar fonte Terminus se não estiver disponível
+    if ! pacman -Qi terminus-font >/dev/null 2>&1; then
+        echo "A instalar fonte do terminal..."
+        pacman -S --noconfirm terminus-font >/dev/null 2>&1
+    fi
+    # Usar a fonte Terminus grande com suporte a Unicode
+    setfont ter-124n 2>/dev/null || setfont ter-120n 2>/dev/null || true
+fi
+
+# Garantir locale UTF-8 para caracteres especiais
+export LANG=C.UTF-8
+export LC_ALL=C.UTF-8
+export TERM="${TERM:-linux}"
+
 echo ""
-echo "  ⬡  ArchTUI — Instalador do Arch Linux"
-echo "  ─────────────────────────────────────"
+echo "  ArchTUI — Instalador do Arch Linux"
+echo "  -----------------------------------"
 echo ""
 "$PYTHON_BIN" "$SCRIPT_DIR/run.py"
