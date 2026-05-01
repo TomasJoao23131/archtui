@@ -4,7 +4,13 @@ from textual.binding import Binding
 from installer.core import detect_disks
 from installer.ui.sidebar import InstallerScreen
 
+FILESYSTEMS = [
+    ("ext4 (padrão, simples e estável)", "ext4"),
+    ("BTRFS (suporta snapshots e compressão)", "btrfs"),
+]
+
 SWAP_SIZES = [
+    ("ZRAM (recomendado, usa RAM compactada)", "zram"),
     ("2 GB (recomendado para 4-8 GB RAM)", "2G"),
     ("4 GB (recomendado para 8-16 GB RAM)", "4G"),
     ("8 GB (para hibernação com 8+ GB RAM)", "8G"),
@@ -29,7 +35,7 @@ class PartitionScreen(InstallerScreen):
             Static("Esquema de partições", id="header-text"),
             Static(
                 "Escolhe como queres organizar o disco. O modo automático\n"
-                "cria uma tabela GPT com UEFI ou BIOS boot e particao raiz.",
+                "cria uma tabela GPT com UEFI ou BIOS boot e partição raiz.",
                 classes="help-text",
             ),
             RadioSet(
@@ -38,16 +44,21 @@ class PartitionScreen(InstallerScreen):
             ),
             Static("Disco de destino:", classes="field-label"),
             self._build_disk_radios(),
-            Static("Swap (memoria virtual):", classes="field-label"),
+            Static("Sistema de ficheiros:", classes="field-label"),
+            RadioSet(
+                *[RadioButton(fs[0], id=f"fs-{i}") for i, fs in enumerate(FILESYSTEMS)],
+                id="fs-list",
+            ),
+            Static("Swap (memória virtual):", classes="field-label"),
             RadioSet(
                 *[RadioButton(s[0], id=f"swap-{i}") for i, s in enumerate(SWAP_SIZES)],
                 id="swap-list",
             ),
             Static(
-                "NOTA\n"
+                "⚠️ ATENÇÃO ⚠️\n"
                 "O particionamento automático APAGA TODO o disco selecionado.\n"
-                "Escreve APAGAR na caixa abaixo para confirmar a destruicao dos dados.",
-                classes="note-box",
+                "Escreve APAGAR na caixa abaixo para confirmar a destruição dos dados.",
+                classes="danger-text",
             ),
             Input(placeholder="Escreve APAGAR para confirmar...", id="confirm-erase-input"),
             Horizontal(
@@ -75,6 +86,7 @@ class PartitionScreen(InstallerScreen):
                 self.query_one("#disk-0", RadioButton).value = True
             except Exception:
                 pass
+        self.query_one("#fs-0", RadioButton).value = True
         self.query_one("#swap-0", RadioButton).value = True
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
@@ -106,12 +118,17 @@ class PartitionScreen(InstallerScreen):
         swap_idx = self.get_radio_index("#swap-list")
         swap_size = SWAP_SIZES[swap_idx][1]
 
+        fs_idx = self.get_radio_index("#fs-list")
+        filesystem = FILESYSTEMS[fs_idx][1]
+
         disk = self._detected_disks[disk_idx]
         self.app.config["partition_method"] = "auto"
         self.app.config["disk"] = disk["path"]
         self.app.config["disk_label"] = disk["label"]
         self.app.config["swap_size"] = swap_size
+        self.app.config["filesystem"] = filesystem
         self.go_next("base")
 
     def action_go_back(self) -> None:
         self.go_back("keyboard")
+

@@ -15,17 +15,24 @@ class SummaryScreen(InstallerScreen):
     def compose(self):
         c = self.app.config
         swap = c.get("swap_size", "2G")
-        swap_label = "Desativado" if swap == "none" else swap
+        if swap == "none":
+            swap_label = "Desativado"
+        elif swap == "zram":
+            swap_label = "ZRAM (RAM compactada)"
+        else:
+            swap_label = swap
 
         lines = [
             f"  Idioma:          {c.get('language', 'pt_BR')}",
             f"  Fuso horário:    {c.get('timezone', 'UTC')}",
             f"  Teclado:         {c.get('keyboard', 'br-abnt2')}",
             f"  Disco:           {c.get('disk_label') or c.get('disk', '---')}",
+            f"  Sist. Ficheiros: {c.get('filesystem', 'ext4').upper()}",
             f"  Swap:            {swap_label}",
             f"  Kernel:          {c.get('kernel', 'linux')}",
             f"  Hostname:        {c.get('hostname', 'archlinux')}",
             f"  Utilizador:      {c.get('username', '---')}",
+            f"  Shell:           {c.get('shell', 'bash')}",
             f"  Sudo:            {'Sim' if c.get('sudo') else 'Não'}",
             f"  Ambiente:        {c.get('desktop', 'gnome')}",
             f"  Driver vídeo:    {c.get('video_driver', 'auto')}",
@@ -34,7 +41,15 @@ class SummaryScreen(InstallerScreen):
         ]
         extras = c.get("extra_packages", [])
         if extras:
-            lines.append(f"  Extras:          {', '.join(extras)}")
+            display_extras = []
+            for ext in extras:
+                if ext == "aur_yay":
+                    display_extras.append("yay-bin")
+                elif ext == "aur_paru":
+                    display_extras.append("paru-bin")
+                else:
+                    display_extras.append(ext)
+            lines.append(f"  Extras:          {', '.join(display_extras)}")
 
         yield from self.compose_with_sidebar(
             Static("Confirmar Instalação", id="header-text"),

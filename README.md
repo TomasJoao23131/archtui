@@ -13,7 +13,7 @@ Em **9 passos simples**, ele configura e instala o Arch Linux no seu computador,
 ## ✨ Funcionalidades
 
 - 🎨 **Interface TUI moderna** utilizando a excelente biblioteca [Textual](https://textual.textualize.io/)
-- 🖱️ **Navegação versátil** suportando teclado e rato
+- ⌨️ **Navegação 100% via teclado** optimizada para o TTY
 - 📚 **Guia passo a passo** com explicações claras em cada ecrã
 - 📊 **Barra lateral** com progresso visual (✓ completo, ▸ atual, ○ pendente)
 - 💽 **Deteção automática de discos** recorrendo ao `lsblk`
@@ -88,12 +88,13 @@ Caso queira testar a interface num sistema já instalado (modo simulação/teste
 | `Enter`     | Confirmar seleção atual |
 | `Tab`       | Saltar entre os diferentes campos no ecrã |
 | `q`         | Cancelar e sair do instalador |
-| `Rato`      | Clicar livremente em botões, abas e listas |
+
 
 ## ✅ O que é suportado
 
 - **Instalação completa** dentro do liveboot oficial do Arch Linux.
 - **Particionamento automático** (apaga todo o disco e cria o esquema ideal).
+  - **Sistemas de Ficheiros:** `ext4` (padrão) ou `BTRFS` (com criação automática de subvolumes `@`, `@home`, `@log`, `@pkg`, `@snapshots` para fácil integração com o Timeshift).
 - **GPT Automático** suportado tanto em sistemas UEFI como BIOS/Legacy.
   - *UEFI:* Partição EFI (512 MB) + Raiz.
   - *BIOS:* Partição BIOS boot (1 MB) + Raiz.
@@ -103,14 +104,14 @@ Caso queira testar a interface num sistema já instalado (modo simulação/teste
 - **Drivers de Vídeo:** Auto-deteção, Intel, AMD, NVIDIA (proprietário), Nouveau (NVIDIA open-source), VM (VMware/VirtualBox).
 - **35+ idiomas** e **48+ layouts de teclado** com variantes (no dead keys, internacional, etc.).
 - **Configuração de teclado** tanto para consola (vconsole) como para ambiente gráfico (X11/Wayland).
-- Criação de utilizador, privilégios `sudo`, configuração de senhas, hostname, locale e keymap.
+- **Criação de utilizador**, privilégios `sudo`, passwords, hostname, locale, keymap e seleção de **Shell** (`Bash`, `Zsh`, ou `Fish`).
 - **Reboot automático** com countdown de 10 segundos após conclusão da instalação.
 - **Otimização de mirrors** via `reflector` antes do `pacstrap` para downloads mais rápidos.
-- **Swapfile automático** configurável (2GB, 4GB, 8GB ou desativado).
+- **Gestão de Swap:** Escolha entre **ZRAM** (compactação rápida em RAM, recomendado), Swapfile (2GB, 4GB, 8GB) ou desativado.
 - **50+ fusos horários** organizados por região.
 - **Seleção de Kernel:** `linux` (padrão), `linux-lts` (estabilidade) ou `linux-zen` (gaming/desktop).
 - **Instruções WiFi** integradas no ecrã inicial para ligação via `iwctl`.
-- **14+ pacotes extras** opcionais (Firefox, Git, PipeWire, Bluetooth, Flatpak, etc.).
+- **16+ pacotes extras** opcionais, incluindo instalação nativa de **AUR Helpers** (`yay-bin`, `paru-bin`), Firefox, Git, PipeWire, Bluetooth, Flatpak, etc.
 - **Ativação automática** do `NetworkManager` após instalar a interface.
 - **Repositório Multilib** (`[multilib]`) configurável no ecrã inicial para suporte a aplicações de 32-bits (ex: Steam, Wine).
 

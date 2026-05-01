@@ -31,6 +31,8 @@ PACKAGES_BASE = [
 ]
 
 PACKAGES_EXTRAS = [
+    ("yay-bin (AUR Helper, recomendado)", "aur_yay"),
+    ("paru-bin (AUR Helper em Rust)", "aur_paru"),
     ("Firefox (navegador)", "firefox"),
     ("LibreOffice (escritório)", "libreoffice-fresh"),
     ("Git (controlo de versões)", "git"),

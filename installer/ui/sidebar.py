@@ -102,7 +102,7 @@ class InstallerScreen(Screen):
         yield Container(
             *content_widgets,
             Static(
-                "[Tab] navegar  [Enter] selecionar  [Mouse] clicável",
+                "[Tab] navegar  [Enter] selecionar",
                 classes="nav-hint",
             ),
             id="main",

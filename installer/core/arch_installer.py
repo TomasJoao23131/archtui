@@ -176,7 +176,9 @@ class ArchInstaller:
             raise ArchInstallError("So o particionamento automatico esta implementado.")
         if not self.config.get("disk"):
             raise ArchInstallError("Nenhum disco foi selecionado.")
-        for command in ("sgdisk", "wipefs", "mkfs.fat", "mkfs.ext4", "mount", "pacstrap", "arch-chroot"):
+        fs = self.config.get("filesystem", "ext4")
+        fs_cmd = "mkfs.btrfs" if fs == "btrfs" else "mkfs.ext4"
+        for command in ("sgdisk", "wipefs", "mkfs.fat", fs_cmd, "mount", "pacstrap", "arch-chroot"):
             if not self._command_exists(command):
                 raise ArchInstallError(f"Comando obrigatorio em falta: {command}")
         if not self._is_disk_device(self.config["disk"]):
@@ -215,9 +217,33 @@ class ArchInstaller:
 
     def _format_and_mount(self) -> None:
         self.set_status("A formatar e montar particoes...", 30)
-        self._run(["mkfs.ext4", "-F", self.root_partition])
-        self.mountpoint.mkdir(parents=True, exist_ok=True)
-        self._run(["mount", self.root_partition, str(self.mountpoint)])
+        fs = self.config.get("filesystem", "ext4")
+        if fs == "btrfs":
+            self._run(["mkfs.btrfs", "-f", self.root_partition])
+            self.mountpoint.mkdir(parents=True, exist_ok=True)
+            self._run(["mount", self.root_partition, str(self.mountpoint)])
+            self._run(["btrfs", "subvolume", "create", f"{self.mountpoint}/@"])
+            self._run(["btrfs", "subvolume", "create", f"{self.mountpoint}/@home"])
+            self._run(["btrfs", "subvolume", "create", f"{self.mountpoint}/@log"])
+            self._run(["btrfs", "subvolume", "create", f"{self.mountpoint}/@pkg"])
+            self._run(["btrfs", "subvolume", "create", f"{self.mountpoint}/@snapshots"])
+            self._run(["umount", str(self.mountpoint)])
+            
+            # Mount subvolumes
+            mount_opts = "rw,noatime,compress=zstd:1,space_cache=v2"
+            self._run(["mount", "-o", f"{mount_opts},subvol=@", self.root_partition, str(self.mountpoint)])
+            (self.mountpoint / "home").mkdir(parents=True, exist_ok=True)
+            self._run(["mount", "-o", f"{mount_opts},subvol=@home", self.root_partition, str(self.mountpoint / "home")])
+            (self.mountpoint / "var/log").mkdir(parents=True, exist_ok=True)
+            self._run(["mount", "-o", f"{mount_opts},subvol=@log", self.root_partition, str(self.mountpoint / "var/log")])
+            (self.mountpoint / "var/cache/pacman/pkg").mkdir(parents=True, exist_ok=True)
+            self._run(["mount", "-o", f"{mount_opts},subvol=@pkg", self.root_partition, str(self.mountpoint / "var/cache/pacman/pkg")])
+            (self.mountpoint / ".snapshots").mkdir(parents=True, exist_ok=True)
+            self._run(["mount", "-o", f"{mount_opts},subvol=@snapshots", self.root_partition, str(self.mountpoint / ".snapshots")])
+        else:
+            self._run(["mkfs.ext4", "-F", self.root_partition])
+            self.mountpoint.mkdir(parents=True, exist_ok=True)
+            self._run(["mount", self.root_partition, str(self.mountpoint)])
         if self._is_uefi():
             self._run(["mkfs.fat", "-F32", self.efi_partition])
             boot_path = self.mountpoint / "boot"
@@ -228,6 +254,9 @@ class ArchInstaller:
         swap_size = self.config.get("swap_size", "2G")
         if swap_size == "none":
             self.log("Swap desativado pelo utilizador.")
+            return
+        if swap_size == "zram":
+            self.log("ZRAM selecionado. Sera configurado via zram-generator.")
             return
         self.set_status(f"A criar swapfile de {swap_size}...", 35)
         swapfile = self.mountpoint / "swapfile"
@@ -268,10 +297,19 @@ class ArchInstaller:
     def _install_base_system(self) -> None:
         self.set_status("A instalar sistema base com pacstrap...", 45)
         packages = []
+        if self.config.get("filesystem") == "btrfs":
+            packages.append("btrfs-progs")
+        if self.config.get("swap_size") == "zram":
+            packages.append("zram-generator")
+        shell = self.config.get("shell", "bash")
+        if shell != "bash":
+            packages.append(shell)
+            
         packages.extend(self.config.get("packages", []))
         # Extras podem conter múltiplos pacotes numa string (e.g. "pipewire pipewire-pulse")
         for extra in self.config.get("extra_packages", []):
-            packages.extend(extra.split())
+            if not extra.startswith("aur_"):
+                packages.extend(extra.split())
         packages.extend(self.DESKTOP_PACKAGES.get(self.config.get("desktop", "cli"), []))
         packages.extend(self.VIDEO_PACKAGES.get(self.config.get("video_driver", "auto"), []))
         packages.extend(self._bootloader_packages())
@@ -304,6 +342,11 @@ class ArchInstaller:
         username = self.config.get("username", "user")
         user_password = self.config.get("password", "")
         root_password = self.config.get("root_password", user_password)
+        shell = self.config.get("shell", "bash")
+
+        if self.config.get("swap_size") == "zram":
+            zram_conf = "[zram0]\nzram-size = ram / 2\ncompression-algorithm = zstd\nswap-priority = 100\n"
+            self._write_target_file("/etc/systemd/zram-generator.conf", zram_conf)
 
         self._write_target_file(
             "/etc/locale.gen",
@@ -359,7 +402,7 @@ class ArchInstaller:
             )
             self._write_target_file("/etc/pacman.conf", pacman_conf)
 
-        self._chroot(f"useradd -m -G wheel -s /bin/bash {shlex.quote(username)}")
+        self._chroot(f"useradd -m -G wheel -s /bin/{shell} {shlex.quote(username)}")
         if self.config.get("sudo"):
             sudoers_path = self.mountpoint / "etc/sudoers.d/10-wheel"
             sudoers_path.write_text("%wheel ALL=(ALL:ALL) ALL\n", encoding="utf-8")
@@ -396,6 +439,23 @@ class ArchInstaller:
 
         if self.config.get("video_driver") == "vm":
             self._chroot("systemctl enable vmtoolsd", check=False)
+
+        # Install AUR Helper
+        aur_helpers = [pkg for pkg in self.config.get("extra_packages", []) if pkg.startswith("aur_")]
+        if aur_helpers:
+            self.set_status("A compilar AUR Helper (aguarde uns minutos)...", 80)
+            self._chroot("pacman -S --noconfirm --needed git base-devel", check=False)
+            for aur in aur_helpers:
+                if aur == "aur_yay":
+                    repo_url = "https://aur.archlinux.org/yay-bin.git"
+                    target_dir = "/tmp/yay-bin"
+                elif aur == "aur_paru":
+                    repo_url = "https://aur.archlinux.org/paru-bin.git"
+                    target_dir = "/tmp/paru-bin"
+                
+                self._chroot(f"git clone {repo_url} {target_dir}", check=False)
+                self._chroot(f"chown -R {shlex.quote(username)}:{shlex.quote(username)} {target_dir}", check=False)
+                self._chroot(f"sudo -u {shlex.quote(username)} bash -c 'cd {target_dir} && makepkg -si --noconfirm'", check=False)
 
     def _install_bootloader(self) -> None:
         self.set_status("A instalar bootloader...", 85)

@@ -26,7 +26,7 @@ class WelcomeScreen(Screen):
                 "Bem-vindo ao ArchTUI — o instalador guiado do Arch Linux.\n\n"
                 "Em 9 passos simples, este assistente configura e instala\n"
                 "o Arch Linux no teu computador. Podes usar o teclado\n"
-                "ou o rato para navegar. Nenhuma alteração é feita\n"
+                "usando as setas e o [Tab]. Nenhuma alteração é feita\n"
                 "até confirmares no passo final.",
                 id="welcome-text",
             ),
@@ -54,7 +54,7 @@ class WelcomeScreen(Screen):
                 classes="note-box",
             ),
             Static(
-                "  Enter  Iniciar    |    q  Sair    |    Mouse  Clicável",
+                "  Enter  Iniciar    |    q  Sair",
                 id="welcome-keys",
             ),
             Horizontal(
