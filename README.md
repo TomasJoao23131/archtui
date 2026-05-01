@@ -40,7 +40,7 @@ Inicie o computador com a pen drive do **live environment** oficial do Arch Linu
 ### Método 1: Download Rápido (Recomendado)
 Faça o download do script e execute diretamente:
 ```bash
-ARCHTUI_REPO_URL=https://github.com/TomasJoao23131/archtui.git curl -sL https://raw.githubusercontent.com/TomasJoao23131/archtui/main/install.sh | sudo bash
+curl -sL https://raw.githubusercontent.com/TomasJoao23131/archtui/main/install.sh | sudo ARCHTUI_REPO_URL=https://github.com/TomasJoao23131/archtui.git bash
 ```
 
 ### Método 2: Clonar o Repositório Manualmente
