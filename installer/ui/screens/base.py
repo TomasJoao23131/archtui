@@ -11,9 +11,11 @@ PACKAGES_BASE = [
 
 PACKAGES_EXTRAS = [
     ("Firefox (navegador)", "firefox"),
-    ("LibreOffice (escritório)", "libreoffice-fresh"),
-    ("Servidor Xorg", "xorg"),
-    ("Sway (compositor Wayland)", "sway"),
+    ("LibreOffice (escritorio)", "libreoffice-fresh"),
+    ("Git (controlo de versoes)", "git"),
+    ("htop (monitor de processos)", "htop"),
+    ("Servidor Xorg (necessario para WMs X11)", "xorg-server"),
+    ("PipeWire (audio moderno)", "pipewire pipewire-pulse"),
 ]
 
 

@@ -23,15 +23,15 @@ Em **9 passos simples**, ele configura e instala o Arch Linux no seu computador,
 
 | Passo | O que configura |
 |:-----:|-----------------|
-| **1** | 🌍 **Idioma:** Locale do sistema (pt_BR, pt_PT, en_US, es_ES) |
-| **2** | ⌨️ **Teclado:** Layout da consola (ABNT2, QWERTY PT, US, ES) |
+| **1** | 🌍 **Idioma:** Locale do sistema (35+ idiomas suportados) |
+| **2** | ⌨️ **Teclado:** Layout por país + variantes (no dead keys, Dvorak, etc.) |
 | **3** | 💽 **Partições:** Disco alvo + particionamento automático GPT |
 | **4** | 📦 **Sistema Base:** Hostname + pacotes base + extras opcionais |
 | **5** | 🥾 **Bootloader:** GRUB, systemd-boot ou rEFInd |
 | **6** | 👤 **Utilizador:** Nome, palavra-passe, sudo, root password |
-| **7** | 🖥️ **Ambiente:** Desktop (GNOME, KDE, XFCE, etc.) + driver de vídeo |
+| **7** | 🖥️ **Ambiente:** Desktop/WM (12 opções) + driver de vídeo |
 | **8** | 📋 **Confirmar:** Revisão completa de todas as configurações |
-| **9** | 🚀 **Instalação:** Execução real com barra de progresso e logs detalhados |
+| **9** | 🚀 **Instalação:** Execução real com barra de progresso + reboot automático |
 
 ## 🚀 Instalação e Uso
 
@@ -98,11 +98,15 @@ Caso queira testar a interface num sistema já instalado (modo simulação/teste
   - *UEFI:* Partição EFI (512 MB) + Raiz.
   - *BIOS:* Partição BIOS boot (1 MB) + Raiz.
 - **Bootloaders:** GRUB (ambos UEFI/BIOS), systemd-boot (apenas UEFI), rEFInd (apenas UEFI).
-- **Ambientes Desktop:** GNOME, KDE Plasma, XFCE, MATE, Cinnamon, ou Modo CLI (Sem desktop).
-- **Drivers de Vídeo:** Auto-deteção, Intel, AMD, NVIDIA, Virtual Machine (VMware/VirtualBox).
-- Criação de utilizador, privilégios `sudo`, configuração de senhas, hostname, locale e keymap da consola.
+- **Ambientes Desktop:** GNOME, KDE Plasma, XFCE, MATE, Cinnamon, Budgie, LXQt, Deepin, ou Modo CLI.
+- **Window Managers:** i3, Sway, Hyprland — com auto-start configurado automaticamente.
+- **Drivers de Vídeo:** Auto-deteção, Intel, AMD, NVIDIA (proprietário), Nouveau (NVIDIA open-source), VM (VMware/VirtualBox).
+- **35+ idiomas** e **48+ layouts de teclado** com variantes (no dead keys, internacional, etc.).
+- **Configuração de teclado** tanto para consola (vconsole) como para ambiente gráfico (X11/Wayland).
+- Criação de utilizador, privilégios `sudo`, configuração de senhas, hostname, locale e keymap.
+- **Reboot automático** com countdown de 10 segundos após conclusão da instalação.
 - **Ativação automática** do `NetworkManager` após instalar a interface.
-- **Repositório Multilib** (`[multilib]`) ativado automaticamente para suporte a aplicações de 32-bits (ex: Steam, Wine).
+- **Repositório Multilib** (`[multilib]`) configurável no ecrã inicial para suporte a aplicações de 32-bits (ex: Steam, Wine).
 
 ## 🚧 Limitações Atuais
 

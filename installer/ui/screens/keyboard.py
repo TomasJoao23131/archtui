@@ -4,123 +4,123 @@ from textual.binding import Binding
 from installer.ui.sidebar import InstallerScreen
 
 
-# País -> lista de (nome da variante, keymap)
+# País -> lista de (nome da variante, keymap_consola, xkb_layout:xkb_variant)
 KEYBOARD_GROUPS = {
     "Portugal": [
-        ("QWERTY", "pt-latin9"),
-        ("QWERTY (no dead keys)", "pt-latin1"),
+        ("QWERTY", "pt-latin9", "pt:"),
+        ("QWERTY (no dead keys)", "pt-latin1", "pt:nodeadkeys"),
     ],
     "Brasil": [
-        ("ABNT2", "br-abnt2"),
-        ("ABNT2 (no dead keys)", "br-abnt2-ndeadkeys"),
+        ("ABNT2", "br-abnt2", "br:"),
+        ("ABNT2 (no dead keys)", "br-abnt2", "br:nodeadkeys"),
     ],
     "EUA": [
-        ("US QWERTY", "us"),
-        ("US Internacional (dead keys)", "us-acentos"),
-        ("Dvorak", "dvorak"),
-        ("Colemak", "colemak"),
+        ("US QWERTY", "us", "us:"),
+        ("US Internacional (dead keys)", "us-acentos", "us:intl"),
+        ("Dvorak", "dvorak", "us:dvorak"),
+        ("Colemak", "colemak", "us:colemak"),
     ],
     "Reino Unido": [
-        ("UK QWERTY", "uk"),
+        ("UK QWERTY", "uk", "gb:"),
     ],
     "Espanha": [
-        ("QWERTY", "es"),
-        ("QWERTY (no dead keys)", "es-nodeadkeys"),
-        ("Latinoamericano", "la-latin1"),
+        ("QWERTY", "es", "es:"),
+        ("QWERTY (no dead keys)", "es-nodeadkeys", "es:nodeadkeys"),
+        ("Latinoamericano", "la-latin1", "latam:"),
     ],
     "Franca": [
-        ("AZERTY", "fr"),
-        ("AZERTY (no dead keys)", "fr-nodeadkeys"),
-        ("Belgica AZERTY", "be-latin1"),
+        ("AZERTY", "fr", "fr:"),
+        ("AZERTY (no dead keys)", "fr-nodeadkeys", "fr:nodeadkeys"),
+        ("Belgica AZERTY", "be-latin1", "be:"),
     ],
     "Alemanha": [
-        ("QWERTZ", "de"),
-        ("QWERTZ (no dead keys)", "de-nodeadkeys"),
-        ("Suica (Alemao)", "de_CH-latin1"),
-        ("Suica (Frances)", "fr_CH"),
+        ("QWERTZ", "de", "de:"),
+        ("QWERTZ (no dead keys)", "de-nodeadkeys", "de:nodeadkeys"),
+        ("Suica (Alemao)", "de_CH-latin1", "ch:de"),
+        ("Suica (Frances)", "fr_CH", "ch:fr"),
     ],
     "Italia": [
-        ("QWERTY", "it"),
+        ("QWERTY", "it", "it:"),
     ],
     "Paises Baixos": [
-        ("QWERTY", "nl"),
+        ("QWERTY", "nl", "nl:"),
     ],
     "Suecia": [
-        ("Sueco", "sv-latin1"),
+        ("Sueco", "sv-latin1", "se:"),
     ],
     "Noruega": [
-        ("Noruegues", "no"),
+        ("Noruegues", "no", "no:"),
     ],
     "Dinamarca": [
-        ("Dinamarques", "dk"),
+        ("Dinamarques", "dk", "dk:"),
     ],
     "Finlandia": [
-        ("Finlandes", "fi"),
+        ("Finlandes", "fi", "fi:"),
     ],
     "Islandia": [
-        ("Islandes", "is-latin1"),
+        ("Islandes", "is-latin1", "is:"),
     ],
     "Polonia": [
-        ("Polaco", "pl"),
+        ("Polaco", "pl", "pl:"),
     ],
     "Republica Checa": [
-        ("QWERTZ", "cz-qwertz"),
-        ("QWERTY", "cz-lat2"),
+        ("QWERTZ", "cz-qwertz", "cz:qwerty"),
+        ("QWERTY", "cz-lat2", "cz:"),
     ],
     "Eslovaquia": [
-        ("QWERTY", "sk-qwerty"),
+        ("QWERTY", "sk-qwerty", "sk:"),
     ],
     "Hungria": [
-        ("Hungaro", "hu"),
+        ("Hungaro", "hu", "hu:"),
     ],
     "Romenia": [
-        ("Romeno", "ro"),
+        ("Romeno", "ro", "ro:"),
     ],
     "Croacia": [
-        ("Croata", "croat"),
+        ("Croata", "croat", "hr:"),
     ],
     "Eslovenia": [
-        ("Esloveno", "slovene"),
+        ("Esloveno", "slovene", "si:"),
     ],
     "Servia": [
-        ("Latim", "sr-latin"),
+        ("Latim", "sr-latin", "rs:latin"),
     ],
     "Russia": [
-        ("Russo", "ru"),
+        ("Russo", "ru", "ru:"),
     ],
     "Ucrania": [
-        ("Ucraniano", "ua-utf"),
+        ("Ucraniano", "ua-utf", "ua:"),
     ],
     "Bulgaria": [
-        ("Fonetico", "bg_pho-utf8"),
+        ("Fonetico", "bg_pho-utf8", "bg:phonetic"),
     ],
     "Turquia": [
-        ("Turco Q", "trq"),
-        ("Turco F", "trf"),
+        ("Turco Q", "trq", "tr:"),
+        ("Turco F", "trf", "tr:f"),
     ],
     "Grecia": [
-        ("Grego", "gr"),
+        ("Grego", "gr", "gr:"),
     ],
     "Japao": [
-        ("Japones (106 teclas)", "jp106"),
+        ("Japones (106 teclas)", "jp106", "jp:"),
     ],
     "Coreia do Sul": [
-        ("Coreano (104 teclas)", "kr104"),
+        ("Coreano (104 teclas)", "kr104", "kr:"),
     ],
     "India": [
-        ("Devanagari", "in-eng"),
+        ("Devanagari", "in-eng", "in:"),
     ],
     "Tailandia": [
-        ("Tailandes", "th-tis"),
+        ("Tailandes", "th-tis", "th:"),
     ],
     "Vietname": [
-        ("Vietnamita", "vn"),
+        ("Vietnamita", "vn", "vn:"),
     ],
     "Arabia Saudita": [
-        ("Arabe", "arabic"),
+        ("Arabe", "arabic", "ara:"),
     ],
     "Israel": [
-        ("Hebraico", "il"),
+        ("Hebraico", "il", "il:"),
     ],
 }
 
@@ -206,8 +206,10 @@ class KeyboardScreen(InstallerScreen):
                 idx = 0
             if idx < len(variants):
                 self.app.config["keyboard"] = variants[idx][1]
+                self.app.config["xkb_layout"] = variants[idx][2]
             else:
                 self.app.config["keyboard"] = variants[0][1] if variants else "us"
+                self.app.config["xkb_layout"] = variants[0][2] if variants else "us:"
             self.go_next("partition")
         elif event.button.id == "btn-back":
             self.go_back("language")

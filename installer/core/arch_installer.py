@@ -226,7 +226,9 @@ class ArchInstaller:
         self.set_status("A instalar sistema base com pacstrap...", 45)
         packages = []
         packages.extend(self.config.get("packages", []))
-        packages.extend(self.config.get("extra_packages", []))
+        # Extras podem conter múltiplos pacotes numa string (e.g. "pipewire pipewire-pulse")
+        for extra in self.config.get("extra_packages", []):
+            packages.extend(extra.split())
         packages.extend(self.DESKTOP_PACKAGES.get(self.config.get("desktop", "cli"), []))
         packages.extend(self.VIDEO_PACKAGES.get(self.config.get("video_driver", "auto"), []))
         packages.extend(self._bootloader_packages())
@@ -270,6 +272,23 @@ class ArchInstaller:
         )
         self._write_target_file("/etc/locale.conf", f"LANG={lang}\n")
         self._write_target_file("/etc/vconsole.conf", f"KEYMAP={keymap}\n")
+
+        # Configurar teclado para X11/Wayland (além da consola)
+        xkb_raw = self.config.get("xkb_layout", "us:")
+        xkb_parts = xkb_raw.split(":", 1)
+        xkb_layout = xkb_parts[0] if xkb_parts[0] else "us"
+        xkb_variant = xkb_parts[1] if len(xkb_parts) > 1 and xkb_parts[1] else ""
+        xkb_conf = (
+            'Section "InputClass"\n'
+            '    Identifier "system-keyboard"\n'
+            '    MatchIsKeyboard "on"\n'
+            f'    Option "XkbLayout" "{xkb_layout}"\n'
+        )
+        if xkb_variant:
+            xkb_conf += f'    Option "XkbVariant" "{xkb_variant}"\n'
+        xkb_conf += "EndSection\n"
+        self._write_target_file("/etc/X11/xorg.conf.d/00-keyboard.conf", xkb_conf)
+        self.log(f"Teclado configurado: {xkb_layout}" + (f" ({xkb_variant})" if xkb_variant else ""))
         self._write_target_file("/etc/hostname", f"{hostname}\n")
         self._write_target_file(
             "/etc/hosts",
