@@ -30,7 +30,7 @@ Em **9 passos simples**, ele configura e instala o Arch Linux no seu computador,
 | **5** | 🥾 **Bootloader:** GRUB, systemd-boot ou rEFInd |
 | **6** | 👤 **Utilizador:** Nome, palavra-passe, sudo, root password |
 | **7** | 🖥️ **Ambiente:** Desktop (GNOME, KDE, XFCE, etc.) + driver de vídeo |
-| **8** | 📋 **Resumo:** Revisão completa de todas as configurações |
+| **8** | 📋 **Confirmar:** Revisão completa de todas as configurações |
 | **9** | 🚀 **Instalação:** Execução real com barra de progresso e logs detalhados |
 
 ## 🚀 Instalação e Uso
@@ -40,8 +40,7 @@ Inicie o computador com a pen drive do **live environment** oficial do Arch Linu
 ### Método 1: Download Rápido (Recomendado)
 Faça o download do script e execute diretamente:
 ```bash
-ARCHTUI_REPO_URL=https://github.com/TomasJoao23131/archtui.git \
-  curl -sL https://raw.githubusercontent.com/TomasJoao23131/archtui/main/install.sh | sudo bash
+ARCHTUI_REPO_URL=https://github.com/TomasJoao23131/archtui.git curl -sL https://raw.githubusercontent.com/TomasJoao23131/archtui/main/install.sh | sudo bash
 ```
 
 ### Método 2: Clonar o Repositório Manualmente
@@ -108,6 +107,7 @@ Caso queira testar a interface num sistema já instalado (modo simulação/teste
 - **Drivers de Vídeo:** Auto-deteção, Intel, AMD, NVIDIA, Virtual Machine (VMware/VirtualBox).
 - Criação de utilizador, privilégios `sudo`, configuração de senhas, hostname, locale e keymap da consola.
 - **Ativação automática** do `NetworkManager` após instalar a interface.
+- **Repositório Multilib** (`[multilib]`) ativado automaticamente para suporte a aplicações de 32-bits (ex: Steam, Wine).
 
 ## 🚧 Limitações Atuais
 

@@ -1,5 +1,5 @@
 from textual.screen import Screen
-from textual.widgets import Static, Button
+from textual.widgets import Static, Button, Checkbox
 from textual.containers import Container, Horizontal
 from textual.binding import Binding
 
@@ -27,6 +27,15 @@ class WelcomeScreen(Screen):
                 "Nenhuma alteração é feita até ao passo final.",
                 id="welcome-text",
             ),
+            Checkbox(
+                "Ativar repositório [multilib] (Recomendado para Jogos/Steam)",
+                id="multilib-checkbox",
+                value=True,
+            ),
+            Static(
+                "Mantém ativado se planeias jogar neste PC. É necessário para correr aplicações de 32-bits.",
+                classes="help-text",
+            ),
             Static(
                 "[Enter] Iniciar  │  [q] Sair  │  [Mouse] Clicável",
                 id="welcome-keys",
@@ -40,6 +49,11 @@ class WelcomeScreen(Screen):
         )
 
     def action_start(self) -> None:
+        try:
+            chk = self.query_one("#multilib-checkbox", Checkbox)
+            self.app.config["multilib"] = chk.value
+        except Exception:
+            pass
         self.app.switch_screen("language")
 
     def action_quit_app(self) -> None:
