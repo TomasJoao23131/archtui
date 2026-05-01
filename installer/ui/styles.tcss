@@ -1,45 +1,57 @@
 /* ============================================================
-   ArchTUI — Tema inspirado em instaladores modernos
+   ArchTUI — Tema Dark Premium
+   Paleta: fundo escuro profundo, acentos em azul Arch (#1793d1),
+   texto claro em branco suave, destaques em verde e amarelo.
    ============================================================ */
 
 Screen {
     layout: grid;
     grid-size: 2;
-    grid-columns: 26 1fr;
-    background: #0d1117;
+    grid-columns: 24 1fr;
+    background: $surface;
 }
+
+/* --- Design Tokens (Textual CSS variables) --- */
+$surface: #0c0e14;
+$surface-alt: #12151e;
+$surface-raised: #181c28;
+$border-dim: #252a3a;
+$border-focus: #1793d1;
+$text-primary: #e8eaf0;
+$text-muted: #6c7086;
+$text-dim: #3e4358;
+$accent: #1793d1;
+$accent-hover: #3daee0;
+$green: #56d364;
+$yellow: #e3b341;
+$red: #f85149;
 
 /* --- Header bar (dock no topo) --- */
 #header-bar {
     dock: top;
     width: 100%;
     height: 1;
-    background: #161b22;
-    color: #8b949e;
+    background: $surface-alt;
+    color: $text-muted;
     padding: 0 1;
     text-style: bold;
 }
 
 /* --- Sidebar --- */
 #sidebar {
-    width: 26;
+    width: 24;
     height: 100%;
-    background: #161b22;
-    border-right: tall #30363d;
+    background: $surface-alt;
+    border-right: vkey $border-dim;
     padding: 1 0;
 }
 
 #sidebar-title {
     text-style: bold;
-    color: #58a6ff;
+    color: $accent;
     padding: 0 1;
     margin-bottom: 1;
-}
-
-#sidebar-sep {
-    color: #30363d;
-    padding: 0 1;
-    margin-bottom: 1;
+    text-opacity: 90%;
 }
 
 .step-item {
@@ -48,89 +60,103 @@ Screen {
 }
 
 .step-completed {
-    color: #3fb950;
+    color: $green;
 }
 
 .step-active {
-    color: #e3b341;
+    color: $yellow;
     text-style: bold;
 }
 
 .step-pending {
-    color: #484f58;
+    color: $text-dim;
 }
 
 /* --- Main content --- */
 #main {
     width: 1fr;
     height: 100%;
-    padding: 1 2;
+    padding: 1 3;
     overflow-y: auto;
+    background: $surface;
 }
 
-/* --- Welcome (full width) --- */
+/* --- Welcome (full width, centered) --- */
 #welcome-screen {
     layout: vertical;
     align: center middle;
     column-span: 2;
+    background: $surface;
+    width: 100%;
+    height: 100%;
+    padding: 2 4;
 }
 
 #welcome-logo {
     text-style: bold;
-    color: #58a6ff;
+    color: $accent;
     text-align: center;
+    margin-bottom: 1;
 }
 
 #welcome-text {
-    margin: 1 0;
-    max-width: 60;
-    color: #c9d1d9;
+    margin: 0 0 1 0;
+    max-width: 64;
+    color: $text-primary;
     text-align: center;
 }
 
 #welcome-keys {
-    max-width: 60;
-    color: #8b949e;
+    max-width: 64;
+    color: $text-dim;
     text-align: center;
-    margin-bottom: 1;
+    margin: 1 0;
 }
 
 #welcome-buttons {
     width: 100%;
     content-align: center middle;
+    margin-top: 1;
 }
 
-/* --- Títulos --- */
+#multilib-checkbox {
+    margin: 1 0 0 0;
+    color: $text-primary;
+    background: transparent;
+}
+
+/* --- Títulos e labels --- */
 #header-text {
     text-style: bold;
-    color: #c9d1d9;
+    color: $text-primary;
     margin-bottom: 1;
 }
 
 .help-text {
-    color: #8b949e;
+    color: $text-muted;
     margin-bottom: 1;
 }
 
 .field-label {
-    color: #8b949e;
+    color: $text-muted;
     margin-top: 1;
     margin-bottom: 0;
 }
 
 .danger-text {
-    color: #f85149;
+    color: $red;
     text-style: bold;
     margin: 1 0;
 }
 
 .info-text {
-    color: #58a6ff;
+    color: $accent;
     margin-bottom: 1;
 }
 
 .nav-hint {
-    color: #484f58;
+    dock: bottom;
+    color: $text-dim;
     margin-top: 1;
 }
 
@@ -139,60 +165,89 @@ Screen {
     width: 100%;
     height: auto;
     align: right bottom;
-    margin-top: 1;
+    margin-top: 2;
 }
 
 Button {
     margin: 0 1;
-    min-width: 14;
+    min-width: 16;
     height: 3;
-    border: tall #30363d;
-    background: #21262d;
-    color: #c9d1d9;
+    border: tall transparent;
+    background: $surface-raised;
+    color: $text-muted;
 }
 
 Button:hover {
-    background: #30363d;
-    border: tall #58a6ff;
+    background: $border-dim;
+    color: $text-primary;
+    border: tall $border-dim;
 }
 
 Button:focus {
-    border: tall #58a6ff;
+    background: $border-dim;
+    color: #ffffff;
     text-style: bold;
+    border: tall $accent;
 }
 
 Button.-primary {
-    background: #1793d1;
+    background: $accent;
     color: #ffffff;
-    border: tall #1793d1;
+    border: tall $accent;
 }
 
 Button.-primary:hover {
-    background: #2ea6e4;
-    border: tall #2ea6e4;
+    background: $accent-hover;
+    border: tall $accent-hover;
+}
+
+Button.-primary:focus {
+    background: #5bbfef;
+    color: #000000;
+    text-style: bold;
+    border: tall #5bbfef;
 }
 
 Button.-success {
-    background: #238636;
+    background: #1a7f37;
     color: #ffffff;
-    border: tall #238636;
+    border: tall #1a7f37;
 }
 
 Button.-success:hover {
-    background: #2ea043;
-    border: tall #2ea043;
+    background: #238636;
+    border: tall #238636;
+}
+
+Button.-success:focus {
+    background: #56d364;
+    color: #000000;
+    text-style: bold;
+    border: tall #56d364;
 }
 
 Button.-error {
-    background: #da3633;
+    background: #8b1a1a;
     color: #ffffff;
-    border: tall #da3633;
+    border: tall #8b1a1a;
+}
+
+Button.-error:hover {
+    background: #b02020;
+    border: tall #b02020;
+}
+
+Button.-error:focus {
+    background: #f85149;
+    color: #000000;
+    text-style: bold;
+    border: tall #f85149;
 }
 
 /* --- RadioSet / RadioButton --- */
 RadioSet {
-    background: #161b22;
-    border: round #30363d;
+    background: $surface-alt;
+    border: round $border-dim;
     padding: 1;
     margin-bottom: 1;
     height: auto;
@@ -200,55 +255,80 @@ RadioSet {
 }
 
 RadioSet:focus-within {
-    border: round #58a6ff;
+    border: round $accent;
 }
 
 RadioButton {
     background: transparent;
-    color: #c9d1d9;
+    color: $text-primary;
     padding: 0 1;
     height: auto;
 }
 
 RadioButton:hover {
-    background: #21262d;
+    background: $surface-raised;
 }
 
 RadioButton.-on {
     color: #ffffff;
     text-style: bold;
-    background: #1793d120;
+    background: $surface-raised;
 }
 
 ToggleButton:focus > .toggle--label {
     text-style: underline;
 }
 
-/* --- OptionList (fallback para listas complexas) --- */
+/* --- Checkbox --- */
+Checkbox {
+    background: transparent;
+    color: $text-primary;
+    padding: 0 1;
+    height: auto;
+}
+
+Checkbox:focus {
+    background: transparent;
+}
+
+Checkbox > .toggle--checkbox {
+    color: $accent;
+    background: $surface-raised;
+}
+
+Checkbox.-on > .toggle--checkbox {
+    color: $accent;
+}
+
+Checkbox:focus > .toggle--label {
+    text-style: bold;
+}
+
+/* --- OptionList --- */
 OptionList {
     height: auto;
     max-height: 8;
     margin-bottom: 1;
-    background: #161b22;
-    border: round #30363d;
+    background: $surface-alt;
+    border: round $border-dim;
 }
 
 OptionList:focus {
-    border: round #58a6ff;
+    border: round $accent;
 }
 
 OptionList > .option-list--option-highlighted {
-    background: #1793d1;
+    background: $accent;
     color: #ffffff;
     text-style: bold;
 }
 
 OptionList > .option-list--option-hover {
-    background: #21262d;
+    background: $surface-raised;
 }
 
 OptionList > .option-list--option-hover-highlighted {
-    background: #1793d1;
+    background: $accent;
     color: #ffffff;
     text-style: bold;
 }
@@ -258,28 +338,34 @@ SelectionList {
     height: auto;
     max-height: 8;
     margin-bottom: 1;
-    background: #161b22;
-    border: round #30363d;
+    background: $surface-alt;
+    border: round $border-dim;
 }
 
 SelectionList:focus {
-    border: round #58a6ff;
+    border: round $accent;
 }
 
 /* --- Input --- */
 Input {
     margin-bottom: 1;
-    background: #161b22;
-    border: round #30363d;
+    background: $surface-alt;
+    border: round $border-dim;
+    color: $text-primary;
 }
 
 Input:focus {
-    border: round #58a6ff;
+    border: round $accent;
+}
+
+Input > .input--placeholder {
+    color: $text-dim;
 }
 
 /* --- Switch --- */
 Switch {
     margin-bottom: 0;
+    background: $surface-raised;
 }
 
 .switch-row {
@@ -291,37 +377,37 @@ Switch {
 #packages-box {
     height: auto;
     max-height: 6;
-    background: #161b22;
-    border: round #30363d;
+    background: $surface-alt;
+    border: round $border-dim;
     padding: 0 1;
     margin-bottom: 1;
     overflow-y: auto;
 }
 
 .package-item {
-    color: #8b949e;
+    color: $text-muted;
 }
 
 #summary-box {
-    background: #161b22;
-    border: round #30363d;
+    background: $surface-alt;
+    border: round $border-dim;
     padding: 1 2;
     margin-bottom: 1;
     height: auto;
 }
 
 #summary-content {
-    color: #c9d1d9;
+    color: $text-primary;
 }
 
-/* --- Note box --- */
+/* --- Note box (tipo callout) --- */
 .note-box {
-    background: #161b22;
-    border-left: tall #e3b341;
+    background: $surface-alt;
+    border-left: outer $yellow;
     padding: 0 1;
     margin: 1 0;
     height: auto;
-    color: #e3b341;
+    color: $yellow;
 }
 
 /* --- Installation --- */
@@ -329,22 +415,30 @@ ProgressBar {
     margin: 1 0;
 }
 
+ProgressBar > .bar--bar {
+    color: $accent;
+}
+
+ProgressBar > .bar--complete {
+    color: $green;
+}
+
 #status-text {
     text-style: bold;
-    color: #58a6ff;
+    color: $accent;
 }
 
 #detail-text {
-    color: #8b949e;
+    color: $text-muted;
     margin-bottom: 1;
 }
 
 #log-output {
     height: 1fr;
-    min-height: 6;
-    background: #0d1117;
-    border: round #30363d;
+    min-height: 8;
+    background: $surface-alt;
+    border: round $border-dim;
     padding: 1;
     overflow-y: auto;
-    color: #8b949e;
+    color: $text-muted;
 }

@@ -16,33 +16,36 @@ class WelcomeScreen(Screen):
         yield Container(
             Static(
                 "\n"
-                "     ⬡  ArchTUI\n"
-                "     ─────────────────\n",
+                "            ⬡  ArchTUI\n"
+                "        ─────────────────────\n"
+                "    Instalador do Arch Linux v0.1\n",
                 id="welcome-logo",
             ),
             Static(
-                "Instalador do Arch Linux com interface gráfica.\n\n"
-                "9 passos simples para instalar o Arch Linux.\n"
-                "Pode usar o rato ou o teclado para navegar.\n"
-                "Nenhuma alteração é feita até ao passo final.",
+                "Bem-vindo ao ArchTUI — o instalador guiado do Arch Linux.\n\n"
+                "Em 9 passos simples, este assistente configura e instala\n"
+                "o Arch Linux no teu computador. Podes usar o teclado\n"
+                "ou o rato para navegar. Nenhuma alteração é feita\n"
+                "até confirmares no passo final.",
                 id="welcome-text",
             ),
             Checkbox(
-                "Ativar repositório [multilib] (Recomendado para Jogos/Steam)",
+                "Ativar repositório [multilib]  ─  Jogos, Steam e Wine (32-bits)",
                 id="multilib-checkbox",
                 value=True,
             ),
             Static(
-                "Mantém ativado se planeias jogar neste PC. É necessário para correr aplicações de 32-bits.",
+                "Recomendado para a maioria dos utilizadores. Desativa apenas\n"
+                "se quiseres um sistema puramente de 64-bits.",
                 classes="help-text",
             ),
             Static(
-                "[Enter] Iniciar  │  [q] Sair  │  [Mouse] Clicável",
+                "  Enter  Iniciar    │    q  Sair    │    Mouse  Clicável",
                 id="welcome-keys",
             ),
             Horizontal(
-                Button("Iniciar Instalação", id="btn-start", variant="primary"),
-                Button("Sair", id="btn-quit", variant="error"),
+                Button("  Iniciar Instalação  ", id="btn-start", variant="primary"),
+                Button("  Sair  ", id="btn-quit", variant="error"),
                 id="welcome-buttons",
             ),
             id="welcome-screen",

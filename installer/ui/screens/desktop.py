@@ -1,4 +1,4 @@
-from textual.widgets import Static, Button, RadioSet, RadioButton, Switch
+from textual.widgets import Static, Button, RadioSet, RadioButton
 from textual.containers import Horizontal
 from textual.binding import Binding
 from installer.ui.sidebar import InstallerScreen
@@ -45,11 +45,6 @@ class DesktopScreen(InstallerScreen):
                 id="video-driver-list",
             ),
             Horizontal(
-                Switch(True, id="multilib-switch"),
-                Static(" Ativar repositório multilib (para jogos Steam e Wine, 32-bits)", classes="field-label"),
-                classes="switch-row",
-            ),
-            Horizontal(
                 Button("← Anterior", id="btn-back", variant="default"),
                 Button("Seguinte →", id="btn-next", variant="primary"),
                 id="nav-buttons",
@@ -64,10 +59,8 @@ class DesktopScreen(InstallerScreen):
         if event.button.id == "btn-next":
             d_idx = self.get_radio_index("#desktop-list")
             v_idx = self.get_radio_index("#video-driver-list")
-            m = self.query_one("#multilib-switch", Switch).value
             self.app.config["desktop"] = DESKTOPS[d_idx][1]
             self.app.config["video_driver"] = VIDEO_DRIVERS[v_idx][1]
-            self.app.config["multilib"] = m
             self.go_next("summary")
         elif event.button.id == "btn-back":
             self.go_back("user")
