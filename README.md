@@ -108,6 +108,9 @@ Caso queira testar a interface num sistema já instalado (modo simulação/teste
 - **Otimização de mirrors** via `reflector` antes do `pacstrap` para downloads mais rápidos.
 - **Swapfile automático** configurável (2GB, 4GB, 8GB ou desativado).
 - **50+ fusos horários** organizados por região.
+- **Seleção de Kernel:** `linux` (padrão), `linux-lts` (estabilidade) ou `linux-zen` (gaming/desktop).
+- **Instruções WiFi** integradas no ecrã inicial para ligação via `iwctl`.
+- **14+ pacotes extras** opcionais (Firefox, Git, PipeWire, Bluetooth, Flatpak, etc.).
 - **Ativação automática** do `NetworkManager` após instalar a interface.
 - **Repositório Multilib** (`[multilib]`) configurável no ecrã inicial para suporte a aplicações de 32-bits (ex: Steam, Wine).
 
@@ -115,5 +118,4 @@ Caso queira testar a interface num sistema já instalado (modo simulação/teste
 
 - **Particionamento Manual:** Ainda não implementado (usar auto particionamento).
 - **Disco Encryption (LUKS):** Ainda não suportado.
-- **Seleção de Kernel:** Apenas `linux` padrão (não oferece `linux-lts` ou `linux-zen`).
 - **Ligação à Internet:** Obrigatória no live environment (via cabo ou Wi-Fi através de `iwctl`).

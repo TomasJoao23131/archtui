@@ -275,7 +275,7 @@ class ArchInstaller:
         packages.extend(self.DESKTOP_PACKAGES.get(self.config.get("desktop", "cli"), []))
         packages.extend(self.VIDEO_PACKAGES.get(self.config.get("video_driver", "auto"), []))
         packages.extend(self._bootloader_packages())
-        packages.extend(["linux", "linux-firmware", "networkmanager", "sudo"])
+        packages.extend(["linux-firmware", "networkmanager", "sudo"])
         final_packages = self._unique(packages)
         self.log(f"Pacotes: {' '.join(final_packages)}")
         self._run(["pacstrap", str(self.mountpoint), *final_packages])
@@ -410,6 +410,7 @@ class ArchInstaller:
             return
 
         if bootloader == "systemd-boot":
+            kernel = self.config.get("kernel", "linux")
             root_uuid = self._get_blkid_value(self.root_partition, "UUID")
             self._chroot("bootctl --path=/boot install")
             self._write_target_file(
@@ -421,8 +422,8 @@ class ArchInstaller:
                 "\n".join(
                     [
                         "title   Arch Linux",
-                        "linux   /vmlinuz-linux",
-                        "initrd  /initramfs-linux.img",
+                        f"linux   /vmlinuz-{kernel}",
+                        f"initrd  /initramfs-{kernel}.img",
                         f"options root=UUID={root_uuid} rw",
                         "",
                     ]
