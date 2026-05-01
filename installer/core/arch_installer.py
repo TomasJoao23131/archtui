@@ -355,7 +355,10 @@ class ArchInstaller:
 
     def _read_target_file(self, relative_path: str) -> str:
         path = self.mountpoint / relative_path.lstrip("/")
-        return path.read_text(encoding="utf-8")
+        try:
+            return path.read_text(encoding="utf-8")
+        except FileNotFoundError:
+            return ""
 
     def _write_target_file(self, relative_path: str, content: str) -> None:
         path = self.mountpoint / relative_path.lstrip("/")
