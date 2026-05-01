@@ -42,6 +42,67 @@ LANGUAGES = [
     ("हिन्दी (भारत)", "hi_IN"),
 ]
 
+TIMEZONES = [
+    # Europa Ocidental
+    ("Europe/Lisbon — Portugal", "Europe/Lisbon"),
+    ("Europe/London — Reino Unido", "Europe/London"),
+    ("Europe/Madrid — Espanha", "Europe/Madrid"),
+    ("Europe/Paris — Franca", "Europe/Paris"),
+    ("Europe/Brussels — Belgica", "Europe/Brussels"),
+    ("Europe/Amsterdam — Paises Baixos", "Europe/Amsterdam"),
+    # Europa Central
+    ("Europe/Berlin — Alemanha", "Europe/Berlin"),
+    ("Europe/Rome — Italia", "Europe/Rome"),
+    ("Europe/Zurich — Suica", "Europe/Zurich"),
+    ("Europe/Vienna — Austria", "Europe/Vienna"),
+    ("Europe/Warsaw — Polonia", "Europe/Warsaw"),
+    ("Europe/Prague — Rep. Checa", "Europe/Prague"),
+    ("Europe/Budapest — Hungria", "Europe/Budapest"),
+    ("Europe/Stockholm — Suecia", "Europe/Stockholm"),
+    ("Europe/Oslo — Noruega", "Europe/Oslo"),
+    ("Europe/Copenhagen — Dinamarca", "Europe/Copenhagen"),
+    ("Europe/Helsinki — Finlandia", "Europe/Helsinki"),
+    # Europa de Leste
+    ("Europe/Bucharest — Romenia", "Europe/Bucharest"),
+    ("Europe/Athens — Grecia", "Europe/Athens"),
+    ("Europe/Istanbul — Turquia", "Europe/Istanbul"),
+    ("Europe/Moscow — Russia", "Europe/Moscow"),
+    ("Europe/Kyiv — Ucrania", "Europe/Kyiv"),
+    # Americas
+    ("America/Sao_Paulo — Brasil (Brasilia)", "America/Sao_Paulo"),
+    ("America/Fortaleza — Brasil (Nordeste)", "America/Fortaleza"),
+    ("America/Manaus — Brasil (Amazonia)", "America/Manaus"),
+    ("America/Buenos_Aires — Argentina", "America/Argentina/Buenos_Aires"),
+    ("America/Mexico_City — Mexico", "America/Mexico_City"),
+    ("America/Bogota — Colombia", "America/Bogota"),
+    ("America/Lima — Peru", "America/Lima"),
+    ("America/Santiago — Chile", "America/Santiago"),
+    ("America/New_York — EUA (Leste)", "America/New_York"),
+    ("America/Chicago — EUA (Centro)", "America/Chicago"),
+    ("America/Denver — EUA (Montanha)", "America/Denver"),
+    ("America/Los_Angeles — EUA (Pacifico)", "America/Los_Angeles"),
+    ("America/Toronto — Canada (Leste)", "America/Toronto"),
+    ("America/Vancouver — Canada (Pacifico)", "America/Vancouver"),
+    # Asia
+    ("Asia/Tokyo — Japao", "Asia/Tokyo"),
+    ("Asia/Shanghai — China", "Asia/Shanghai"),
+    ("Asia/Kolkata — India", "Asia/Kolkata"),
+    ("Asia/Seoul — Coreia do Sul", "Asia/Seoul"),
+    ("Asia/Bangkok — Tailandia", "Asia/Bangkok"),
+    ("Asia/Ho_Chi_Minh — Vietname", "Asia/Ho_Chi_Minh"),
+    ("Asia/Jakarta — Indonesia", "Asia/Jakarta"),
+    ("Asia/Dubai — Emirados Arabes", "Asia/Dubai"),
+    ("Asia/Riyadh — Arabia Saudita", "Asia/Riyadh"),
+    ("Asia/Jerusalem — Israel", "Asia/Jerusalem"),
+    # Africa / Oceania
+    ("Africa/Cairo — Egito", "Africa/Cairo"),
+    ("Africa/Johannesburg — Africa do Sul", "Africa/Johannesburg"),
+    ("Australia/Sydney — Australia (Leste)", "Australia/Sydney"),
+    ("Pacific/Auckland — Nova Zelandia", "Pacific/Auckland"),
+    # Universal
+    ("UTC — Universal", "UTC"),
+]
+
 
 class LanguageScreen(InstallerScreen):
     STEP_NUMBER = 1
@@ -53,30 +114,38 @@ class LanguageScreen(InstallerScreen):
 
     def compose(self):
         yield from self.compose_with_sidebar(
-            Static("Idioma do sistema", id="header-text"),
+            Static("Idioma e Fuso Horario", id="header-text"),
             Static(
-                "Escolha o idioma que será configurado no sistema instalado.\n"
-                "Isto define o locale (formato de datas, números e mensagens).",
+                "Escolha o idioma (locale) e o fuso horario do sistema.",
                 classes="help-text",
             ),
+            Static("Idioma:", classes="field-label"),
             RadioSet(
                 *[RadioButton(lang[0], id=f"lang-{i}") for i, lang in enumerate(LANGUAGES)],
                 id="language-list",
             ),
+            Static("Fuso horario:", classes="field-label"),
+            RadioSet(
+                *[RadioButton(tz[0], id=f"tz-{i}") for i, tz in enumerate(TIMEZONES)],
+                id="timezone-list",
+            ),
             Horizontal(
-                Button("← Anterior", id="btn-back", variant="default"),
-                Button("Seguinte →", id="btn-next", variant="primary"),
+                Button("<- Anterior", id="btn-back", variant="default"),
+                Button("Seguinte ->", id="btn-next", variant="primary"),
                 id="nav-buttons",
             ),
         )
 
     def on_mount(self):
         self.query_one("#lang-0", RadioButton).value = True
+        self.query_one("#tz-0", RadioButton).value = True
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "btn-next":
-            idx = self.get_radio_index("#language-list")
-            self.app.config["language"] = LANGUAGES[idx][1]
+            lang_idx = self.get_radio_index("#language-list")
+            tz_idx = self.get_radio_index("#timezone-list")
+            self.app.config["language"] = LANGUAGES[lang_idx][1]
+            self.app.config["timezone"] = TIMEZONES[tz_idx][1]
             self.go_next("keyboard")
         elif event.button.id == "btn-back":
             self.app.switch_screen("welcome")

@@ -105,12 +105,15 @@ Caso queira testar a interface num sistema já instalado (modo simulação/teste
 - **Configuração de teclado** tanto para consola (vconsole) como para ambiente gráfico (X11/Wayland).
 - Criação de utilizador, privilégios `sudo`, configuração de senhas, hostname, locale e keymap.
 - **Reboot automático** com countdown de 10 segundos após conclusão da instalação.
+- **Otimização de mirrors** via `reflector` antes do `pacstrap` para downloads mais rápidos.
+- **Swapfile automático** configurável (2GB, 4GB, 8GB ou desativado).
+- **50+ fusos horários** organizados por região.
 - **Ativação automática** do `NetworkManager` após instalar a interface.
 - **Repositório Multilib** (`[multilib]`) configurável no ecrã inicial para suporte a aplicações de 32-bits (ex: Steam, Wine).
 
 ## 🚧 Limitações Atuais
 
 - **Particionamento Manual:** Ainda não implementado (usar auto particionamento).
-- **Swap:** Atualmente o script não cria partição `swap` automaticamente.
-- **Timezone:** Encontra-se fixo em `UTC` por predefinição.
+- **Disco Encryption (LUKS):** Ainda não suportado.
+- **Seleção de Kernel:** Apenas `linux` padrão (não oferece `linux-lts` ou `linux-zen`).
 - **Ligação à Internet:** Obrigatória no live environment (via cabo ou Wi-Fi através de `iwctl`).

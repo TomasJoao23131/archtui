@@ -14,8 +14,16 @@ PACKAGES_EXTRAS = [
     ("LibreOffice (escritorio)", "libreoffice-fresh"),
     ("Git (controlo de versoes)", "git"),
     ("htop (monitor de processos)", "htop"),
+    ("neofetch (info do sistema)", "neofetch"),
+    ("wget + curl (downloads)", "wget curl"),
+    ("unzip + p7zip (descompressao)", "unzip p7zip"),
     ("Servidor Xorg (necessario para WMs X11)", "xorg-server"),
-    ("PipeWire (audio moderno)", "pipewire pipewire-pulse"),
+    ("PipeWire (audio moderno)", "pipewire pipewire-pulse wireplumber"),
+    ("Bluetooth (bluez)", "bluez bluez-utils"),
+    ("Impressoras (CUPS)", "cups cups-pdf"),
+    ("NetworkManager applet (tray icon WiFi)", "network-manager-applet"),
+    ("Flatpak (apps universais)", "flatpak"),
+    ("NTFS suporte (ler discos Windows)", "ntfs-3g"),
 ]
 
 
@@ -32,21 +40,21 @@ class BaseSystemScreen(InstallerScreen):
             Static("Sistema Base", id="header-text"),
             Static(
                 "Define o nome do computador (hostname) e escolhe pacotes extra.\n"
-                "Usa [Espaço] ou o rato para selecionar pacotes adicionais.",
+                "Usa [Espaco] ou o rato para selecionar pacotes adicionais.",
                 classes="help-text",
             ),
             Static("Hostname (nome do pc na rede):", classes="field-label"),
             Input(placeholder="archlinux", id="hostname-input", value="archlinux"),
             Static("Pacotes base (instalados automaticamente):", classes="field-label"),
             Container(
-                *[Static(f" • {p}", classes="package-item") for p in PACKAGES_BASE],
+                *[Static(f" - {p}", classes="package-item") for p in PACKAGES_BASE],
                 id="packages-box",
             ),
             Static("Pacotes adicionais (opcional):", classes="field-label"),
             SelectionList(*PACKAGES_EXTRAS, id="extras-list"),
             Horizontal(
-                Button("← Anterior", id="btn-back", variant="default"),
-                Button("Seguinte →", id="btn-next", variant="primary"),
+                Button("<- Anterior", id="btn-back", variant="default"),
+                Button("Seguinte ->", id="btn-next", variant="primary"),
                 id="nav-buttons",
             ),
         )

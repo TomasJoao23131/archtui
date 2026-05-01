@@ -147,6 +147,8 @@ class ArchInstaller:
             self._prepare_partition_layout()
             self._partition_disk()
             self._format_and_mount()
+            self._create_swap()
+            self._optimize_mirrors()
             self._install_base_system()
             self._generate_fstab()
             self._configure_system()
@@ -221,6 +223,47 @@ class ArchInstaller:
             boot_path = self.mountpoint / "boot"
             boot_path.mkdir(parents=True, exist_ok=True)
             self._run(["mount", self.efi_partition, str(boot_path)])
+
+    def _create_swap(self) -> None:
+        swap_size = self.config.get("swap_size", "2G")
+        if swap_size == "none":
+            self.log("Swap desativado pelo utilizador.")
+            return
+        self.set_status(f"A criar swapfile de {swap_size}...", 35)
+        swapfile = self.mountpoint / "swapfile"
+        # Criar ficheiro de swap com o tamanho pedido
+        self._run(["dd", "if=/dev/zero", f"of={swapfile}", "bs=1M",
+                   f"count={self._swap_size_mb(swap_size)}", "status=none"])
+        self._run(["chmod", "600", str(swapfile)])
+        self._run(["mkswap", str(swapfile)])
+        self._run(["swapon", str(swapfile)])
+        self.log(f"Swapfile de {swap_size} criado e ativado.")
+
+    def _swap_size_mb(self, size: str) -> str:
+        """Converte '2G' -> '2048', '4G' -> '4096', etc."""
+        size = size.upper().strip()
+        if size.endswith("G"):
+            return str(int(size[:-1]) * 1024)
+        if size.endswith("M"):
+            return size[:-1]
+        return "2048"
+
+    def _optimize_mirrors(self) -> None:
+        self.set_status("A otimizar mirrors com reflector...", 40)
+        # Instalar reflector se nao estiver disponivel
+        if not self._command_exists("reflector"):
+            self._run(["pacman", "-Sy", "--noconfirm", "reflector"], check=False)
+        if self._command_exists("reflector"):
+            self._run([
+                "reflector",
+                "--latest", "10",
+                "--sort", "rate",
+                "--protocol", "https",
+                "--save", "/etc/pacman.d/mirrorlist",
+            ], check=False)
+            self.log("Mirrors otimizados por velocidade.")
+        else:
+            self.log("Reflector nao disponivel, a usar mirrors predefinidos.")
 
     def _install_base_system(self) -> None:
         self.set_status("A instalar sistema base com pacstrap...", 45)
@@ -302,10 +345,11 @@ class ArchInstaller:
             ),
         )
 
-        self._chroot("ln -sf /usr/share/zoneinfo/UTC /etc/localtime")
+        self._chroot(f"ln -sf /usr/share/zoneinfo/{shlex.quote(self.config.get('timezone', 'UTC'))} /etc/localtime")
         self._chroot("hwclock --systohc")
         self._chroot("locale-gen")
         self._chroot("systemctl enable NetworkManager")
+        self.log(f"Timezone: {self.config.get('timezone', 'UTC')}")
 
         if self.config.get("multilib", True):
             pacman_conf = self._read_target_file("/etc/pacman.conf")

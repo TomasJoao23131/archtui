@@ -361,7 +361,7 @@ OptionList > .option-list--option-hover-highlighted {
 /* --- SelectionList --- */
 SelectionList {
     height: auto;
-    max-height: 8;
+    max-height: 12;
     margin-bottom: 1;
     background: $surface-alt;
     border: round $border-dim;
