@@ -19,7 +19,7 @@ class WelcomeScreen(Screen):
                 "\n"
                 "            ArchTUI\n"
                 "        ---------------------\n"
-                "    Instalador do Arch Linux v{__version__}\n",
+                f"    Instalador do Arch Linux v{__version__}\n",
                 id="welcome-logo",
             ),
             Static(

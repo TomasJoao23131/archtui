@@ -1,5 +1,5 @@
 from textual.widgets import Static, Button, Input, SelectionList, RadioSet, RadioButton
-from textual.containers import Container, Horizontal
+from textual.containers import Horizontal
 from textual.binding import Binding
 from installer.ui.sidebar import InstallerScreen
 
