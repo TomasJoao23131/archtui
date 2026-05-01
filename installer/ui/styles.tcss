@@ -399,20 +399,6 @@ Switch {
 }
 
 /* --- Containers --- */
-#packages-box {
-    height: auto;
-    max-height: 6;
-    background: $surface-alt;
-    border: round $border-dim;
-    padding: 0 1;
-    margin-bottom: 1;
-    overflow-y: auto;
-}
-
-.package-item {
-    color: $text-muted;
-}
-
 #summary-box {
     background: $surface-alt;
     border: round $border-dim;

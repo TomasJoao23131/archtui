@@ -6,22 +6,22 @@ from installer.ui.sidebar import InstallerScreen
 
 KERNELS = [
     (
-        "linux (padrao, ultimas novidades)",
+        "linux (padrão, últimas novidades)",
         "linux",
-        "O kernel padrao do Arch. Recebe as atualizacoes mais recentes\n"
+        "O kernel padrão do Arch. Recebe as atualizações mais recentes\n"
         "e suporta o hardware mais novo. Recomendado para a maioria.",
     ),
     (
-        "linux-lts (longa duracao, maximo de estabilidade)",
+        "linux-lts (longa duração, maximo de estabilidade)",
         "linux-lts",
-        "Kernel com suporte de longa duracao. Recebe menos atualizacoes\n"
-        "mas e mais estavel. Ideal para servidores ou PCs de trabalho.",
+        "Kernel com suporte de longa duração. Recebe menos atualizações\n"
+        "mas e mais estável. Ideal para servidores ou PCs de trabalho.",
     ),
     (
         "linux-zen (otimizado para desktop e jogos)",
         "linux-zen",
         "Kernel otimizado para uso interativo. Melhor resposta em jogos,\n"
-        "audio e multitarefa. Ideal para gaming e uso diario intenso.",
+        "áudio e multitarefa. Ideal para gaming e uso diário intenso.",
     ),
 ]
 
@@ -32,14 +32,14 @@ PACKAGES_BASE = [
 
 PACKAGES_EXTRAS = [
     ("Firefox (navegador)", "firefox"),
-    ("LibreOffice (escritorio)", "libreoffice-fresh"),
-    ("Git (controlo de versoes)", "git"),
+    ("LibreOffice (escritório)", "libreoffice-fresh"),
+    ("Git (controlo de versões)", "git"),
     ("htop (monitor de processos)", "htop"),
-    ("neofetch (info do sistema)", "neofetch"),
+    ("fastfetch (info do sistema)", "fastfetch"),
     ("wget + curl (downloads)", "wget curl"),
-    ("unzip + p7zip (descompressao)", "unzip p7zip"),
-    ("Servidor Xorg (necessario para WMs X11)", "xorg-server"),
-    ("PipeWire (audio moderno)", "pipewire pipewire-pulse wireplumber"),
+    ("unzip + p7zip (descompressão)", "unzip p7zip"),
+    ("Servidor Xorg (necessário para WMs X11)", "xorg-server"),
+    ("PipeWire (áudio moderno)", "pipewire pipewire-pulse wireplumber"),
     ("Bluetooth (bluez)", "bluez bluez-utils"),
     ("Impressoras (CUPS)", "cups cups-pdf"),
     ("NetworkManager applet (tray icon WiFi)", "network-manager-applet"),
@@ -71,11 +71,11 @@ class BaseSystemScreen(InstallerScreen):
             Static(KERNELS[0][2], id="kernel-desc", classes="info-text"),
             Static("Hostname (nome do pc na rede):", classes="field-label"),
             Input(placeholder="archlinux", id="hostname-input", value="archlinux"),
-            Static("Pacotes adicionais (opcional, usa [Espaco] para marcar):", classes="field-label"),
+            Static("Pacotes adicionais (opcional, usa [Espaço] para marcar):", classes="field-label"),
             SelectionList(*PACKAGES_EXTRAS, id="extras-list"),
             Horizontal(
-                Button("<- Anterior", id="btn-back", variant="default"),
-                Button("Seguinte ->", id="btn-next", variant="primary"),
+                Button("← Anterior", id="btn-back", variant="default"),
+                Button("Seguinte →", id="btn-next", variant="primary"),
                 id="nav-buttons",
             ),
         )

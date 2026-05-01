@@ -28,7 +28,7 @@ KEYBOARD_GROUPS = {
         ("QWERTY (no dead keys)", "es-nodeadkeys", "es:nodeadkeys"),
         ("Latinoamericano", "la-latin1", "latam:"),
     ],
-    "Franca": [
+    "França": [
         ("AZERTY", "fr", "fr:"),
         ("AZERTY (no dead keys)", "fr-nodeadkeys", "fr:nodeadkeys"),
         ("Belgica AZERTY", "be-latin1", "be:"),
@@ -36,16 +36,16 @@ KEYBOARD_GROUPS = {
     "Alemanha": [
         ("QWERTZ", "de", "de:"),
         ("QWERTZ (no dead keys)", "de-nodeadkeys", "de:nodeadkeys"),
-        ("Suica (Alemao)", "de_CH-latin1", "ch:de"),
-        ("Suica (Frances)", "fr_CH", "ch:fr"),
+        ("Suíça (Alemão)", "de_CH-latin1", "ch:de"),
+        ("Suíça (Francês)", "fr_CH", "ch:fr"),
     ],
-    "Italia": [
+    "Itália": [
         ("QWERTY", "it", "it:"),
     ],
-    "Paises Baixos": [
+    "Países Baixos": [
         ("QWERTY", "nl", "nl:"),
     ],
-    "Suecia": [
+    "Suécia": [
         ("Sueco", "sv-latin1", "se:"),
     ],
     "Noruega": [
@@ -54,69 +54,69 @@ KEYBOARD_GROUPS = {
     "Dinamarca": [
         ("Dinamarques", "dk", "dk:"),
     ],
-    "Finlandia": [
+    "Finlândia": [
         ("Finlandes", "fi", "fi:"),
     ],
-    "Islandia": [
+    "Islândia": [
         ("Islandes", "is-latin1", "is:"),
     ],
-    "Polonia": [
+    "Polónia": [
         ("Polaco", "pl", "pl:"),
     ],
-    "Republica Checa": [
+    "República Checa": [
         ("QWERTZ", "cz-qwertz", "cz:qwerty"),
         ("QWERTY", "cz-lat2", "cz:"),
     ],
-    "Eslovaquia": [
+    "Eslováquia": [
         ("QWERTY", "sk-qwerty", "sk:"),
     ],
     "Hungria": [
         ("Hungaro", "hu", "hu:"),
     ],
-    "Romenia": [
+    "Roménia": [
         ("Romeno", "ro", "ro:"),
     ],
-    "Croacia": [
+    "Croácia": [
         ("Croata", "croat", "hr:"),
     ],
-    "Eslovenia": [
+    "Eslovénia": [
         ("Esloveno", "slovene", "si:"),
     ],
-    "Servia": [
+    "Sérvia": [
         ("Latim", "sr-latin", "rs:latin"),
     ],
-    "Russia": [
+    "Rússia": [
         ("Russo", "ru", "ru:"),
     ],
-    "Ucrania": [
-        ("Ucraniano", "ua-utf", "ua:"),
+    "Ucrânia": [
+        ("Ucrâniano", "ua-utf", "ua:"),
     ],
-    "Bulgaria": [
+    "Bulgária": [
         ("Fonetico", "bg_pho-utf8", "bg:phonetic"),
     ],
     "Turquia": [
         ("Turco Q", "trq", "tr:"),
         ("Turco F", "trf", "tr:f"),
     ],
-    "Grecia": [
+    "Grécia": [
         ("Grego", "gr", "gr:"),
     ],
-    "Japao": [
+    "Japão": [
         ("Japones (106 teclas)", "jp106", "jp:"),
     ],
     "Coreia do Sul": [
         ("Coreano (104 teclas)", "kr104", "kr:"),
     ],
-    "India": [
+    "Índia": [
         ("Devanagari", "in-eng", "in:"),
     ],
-    "Tailandia": [
+    "Tailândia": [
         ("Tailandes", "th-tis", "th:"),
     ],
     "Vietname": [
         ("Vietnamita", "vn", "vn:"),
     ],
-    "Arabia Saudita": [
+    "Arábia Saudita": [
         ("Arabe", "arabic", "ara:"),
     ],
     "Israel": [
@@ -144,12 +144,12 @@ class KeyboardScreen(InstallerScreen):
         yield from self.compose_with_sidebar(
             Static("Layout de Teclado", id="header-text"),
             Static(
-                "Seleciona o pais a esquerda e a variante a direita.",
+                "Seleciona o país à esquerda e a variante à direita.",
                 classes="help-text",
             ),
             Horizontal(
                 Vertical(
-                    Static("Pais / Regiao:", classes="field-label"),
+                    Static("País / Região:", classes="field-label"),
                     RadioSet(
                         *[RadioButton(c, id=f"country-{i}") for i, c in enumerate(COUNTRY_LIST)],
                         id="country-list",
@@ -164,8 +164,8 @@ class KeyboardScreen(InstallerScreen):
                 id="kb-panels",
             ),
             Horizontal(
-                Button("<- Anterior", id="btn-back", variant="default"),
-                Button("Seguinte ->", id="btn-next", variant="primary"),
+                Button("← Anterior", id="btn-back", variant="default"),
+                Button("Seguinte →", id="btn-next", variant="primary"),
                 id="nav-buttons",
             ),
         )

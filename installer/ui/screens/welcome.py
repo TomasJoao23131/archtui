@@ -2,10 +2,11 @@ from textual.screen import Screen
 from textual.widgets import Static, Button, Checkbox
 from textual.containers import Container, Horizontal
 from textual.binding import Binding
+from installer.__version__ import __version__
 
 
 class WelcomeScreen(Screen):
-    """Ecra inicial — Enter ou clique para comecar."""
+    """Ecrã inicial — Enter ou clique para começar."""
 
     BINDINGS = [
         Binding("enter", "start", "Iniciar", show=False),
@@ -18,19 +19,19 @@ class WelcomeScreen(Screen):
                 "\n"
                 "            ArchTUI\n"
                 "        ---------------------\n"
-                "    Instalador do Arch Linux v0.2\n",
+                "    Instalador do Arch Linux v{__version__}\n",
                 id="welcome-logo",
             ),
             Static(
                 "Bem-vindo ao ArchTUI — o instalador guiado do Arch Linux.\n\n"
                 "Em 9 passos simples, este assistente configura e instala\n"
                 "o Arch Linux no teu computador. Podes usar o teclado\n"
-                "ou o rato para navegar. Nenhuma alteracao e feita\n"
-                "ate confirmares no passo final.",
+                "ou o rato para navegar. Nenhuma alteração é feita\n"
+                "até confirmares no passo final.",
                 id="welcome-text",
             ),
             Checkbox(
-                "Ativar repositorio [multilib]  —  Jogos, Steam e Wine (32-bits)",
+                "Ativar repositório [multilib]  —  Jogos, Steam e Wine (32-bits)",
                 id="multilib-checkbox",
                 value=True,
             ),
@@ -40,9 +41,9 @@ class WelcomeScreen(Screen):
                 classes="help-text",
             ),
             Static(
-                "NOTA — Ligacao a Internet\n"
-                "Este instalador precisa de ligacao a Internet. Se estiveres\n"
-                "ligado por cabo Ethernet, ja estas pronto. Se precisares\n"
+                "NOTA — Ligação à Internet\n"
+                "Este instalador precisa de ligação à Internet. Se estiveres\n"
+                "ligado por cabo Ethernet, já estás pronto. Se precisares\n"
                 "de WiFi, abre outro terminal (Alt+F2) e executa:\n\n"
                 "  1. iwctl                         (abrir ferramenta WiFi)\n"
                 "  2. station wlan0 scan             (procurar redes)\n"
@@ -53,11 +54,11 @@ class WelcomeScreen(Screen):
                 classes="note-box",
             ),
             Static(
-                "  Enter  Iniciar    |    q  Sair    |    Mouse  Clicavel",
+                "  Enter  Iniciar    |    q  Sair    |    Mouse  Clicável",
                 id="welcome-keys",
             ),
             Horizontal(
-                Button("  Iniciar Instalacao  ", id="btn-start", variant="primary"),
+                Button("  Iniciar Instalação  ", id="btn-start", variant="primary"),
                 Button("  Sair  ", id="btn-quit", variant="error"),
                 id="welcome-buttons",
             ),

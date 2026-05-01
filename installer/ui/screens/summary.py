@@ -19,17 +19,17 @@ class SummaryScreen(InstallerScreen):
 
         lines = [
             f"  Idioma:          {c.get('language', 'pt_BR')}",
-            f"  Fuso horario:    {c.get('timezone', 'UTC')}",
+            f"  Fuso horário:    {c.get('timezone', 'UTC')}",
             f"  Teclado:         {c.get('keyboard', 'br-abnt2')}",
             f"  Disco:           {c.get('disk_label') or c.get('disk', '---')}",
             f"  Swap:            {swap_label}",
             f"  Kernel:          {c.get('kernel', 'linux')}",
             f"  Hostname:        {c.get('hostname', 'archlinux')}",
             f"  Utilizador:      {c.get('username', '---')}",
-            f"  Sudo:            {'Sim' if c.get('sudo') else 'Nao'}",
+            f"  Sudo:            {'Sim' if c.get('sudo') else 'Não'}",
             f"  Ambiente:        {c.get('desktop', 'gnome')}",
-            f"  Driver video:    {c.get('video_driver', 'auto')}",
-            f"  Multilib:        {'Sim' if c.get('multilib', True) else 'Nao'}",
+            f"  Driver vídeo:    {c.get('video_driver', 'auto')}",
+            f"  Multilib:        {'Sim' if c.get('multilib', True) else 'Não'}",
             f"  Bootloader:      {c.get('bootloader', 'grub')}",
         ]
         extras = c.get("extra_packages", [])
@@ -37,16 +37,16 @@ class SummaryScreen(InstallerScreen):
             lines.append(f"  Extras:          {', '.join(extras)}")
 
         yield from self.compose_with_sidebar(
-            Static("Confirmar Instalacao", id="header-text"),
-            Static("Reve as configuracoes abaixo. [Escape] ou [Anterior] para voltar atras e alterar.", classes="help-text"),
+            Static("Confirmar Instalação", id="header-text"),
+            Static("Revê as configurações abaixo. [Escape] ou [Anterior] para voltar atrás e alterar.", classes="help-text"),
             Container(Static("\n".join(lines), id="summary-content"), id="summary-box"),
             Static(
-                "ATENCAO: Clicar em INSTALAR vai APAGAR O DISCO e comecar a instalacao.\n"
-                "   Esta acao e IRREVERSIVEL.",
+                "ATENÇÃO: Clicar em INSTALAR vai APAGAR O DISCO e começar a instalação.\n"
+                "   Esta ação é IRREVERSÍVEL.",
                 classes="danger-text",
             ),
             Horizontal(
-                Button("<- Anterior", id="btn-back", variant="default"),
+                Button("← Anterior", id="btn-back", variant="default"),
                 Button("INSTALAR", id="btn-install", variant="success"),
                 id="nav-buttons",
             ),

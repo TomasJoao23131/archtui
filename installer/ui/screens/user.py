@@ -20,9 +20,9 @@ class UserScreen(InstallerScreen):
 
     def compose(self):
         yield from self.compose_with_sidebar(
-            Static("Configuracao do Utilizador", id="header-text"),
+            Static("Configuração do Utilizador", id="header-text"),
             Static("Cria a tua conta principal. Usa [Tab] para mudar de campo.", classes="help-text"),
-            Static("Nome de utilizador (sem espacos, minusculas):", classes="field-label"),
+            Static("Nome de utilizador (sem espaços, minúsculas):", classes="field-label"),
             Input(placeholder="utilizador", id="username-input"),
             Static("Palavra-passe:", classes="field-label"),
             Input(placeholder="Palavra-passe...", id="password-input", password=True),
@@ -31,14 +31,14 @@ class UserScreen(InstallerScreen):
             Checkbox("Mostrar palavras-passe", id="show-password-checkbox"),
             Horizontal(
                 Switch(True, id="sudo-switch"),
-                Static("  Conceder privilegios sudo (recomendado)", classes="field-label"),
+                Static("  Conceder privilégios sudo (recomendado)", classes="field-label"),
                 classes="switch-row",
             ),
             Static("Palavra-passe root (deixa vazio para usar a mesma do utilizador):", classes="field-label"),
             Input(placeholder="(mesma do utilizador se vazio)", id="root-password-input", password=True),
             Horizontal(
-                Button("<- Anterior", id="btn-back", variant="default"),
-                Button("Seguinte ->", id="btn-next", variant="primary"),
+                Button("← Anterior", id="btn-back", variant="default"),
+                Button("Seguinte →", id="btn-next", variant="primary"),
                 id="nav-buttons",
             ),
         )

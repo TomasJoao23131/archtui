@@ -15,7 +15,7 @@ class InstallationScreen(InstallerScreen):
     def compose(self):
         yield from self.compose_with_sidebar(
             Static("A instalar...", id="header-text"),
-            Static("Nao desligue o computador. A aguardar...", classes="help-text"),
+            Static("Não desligue o computador. A aguardar...", classes="help-text"),
             ProgressBar(id="progress", total=100),
             Static("A preparar...", id="status-text"),
             Static("", id="detail-text"),
@@ -53,14 +53,14 @@ class InstallationScreen(InstallerScreen):
                 btn.label = "Reiniciar Agora"
                 btn.variant = "success"
                 sev = "information"
-                msg = "Instalacao concluida! A reiniciar em 10s..."
+                msg = "Instalação concluída! A reiniciar em 10s..."
                 # Iniciar countdown para reboot automatico
                 self._reboot_countdown = 20  # 20 ticks de 0.5s = 10 segundos
             else:
                 btn.label = "Fechar"
                 btn.variant = "error"
                 sev = "error"
-                msg = self._installer.error or "Erro na instalacao"
+                msg = self._installer.error or "Erro na instalação"
             self.notify(msg, severity=sev)
         # Countdown para reboot automatico
         if self._reboot_countdown > 0:

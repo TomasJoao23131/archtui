@@ -1,4 +1,5 @@
 import os
+from installer.__version__ import __version__
 from textual.containers import Container
 from textual.reactive import reactive
 from textual.screen import Screen
@@ -96,7 +97,7 @@ class InstallerScreen(Screen):
     def compose_with_sidebar(self, *content_widgets):
         self.app.state["step"] = self.STEP_NUMBER
         host = _get_hostname()
-        yield Static(f" archtui v0.1 — root@{host}", id="header-bar")
+        yield Static(f" ArchTUI v{__version__} — root@{host}", id="header-bar")
         yield Sidebar(step=self.STEP_NUMBER, id="sidebar")
         yield Container(
             *content_widgets,

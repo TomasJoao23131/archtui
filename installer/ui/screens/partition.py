@@ -1,4 +1,4 @@
-from textual.widgets import Static, Button, Input, RadioSet, RadioButton, Switch
+from textual.widgets import Static, Button, Input, RadioSet, RadioButton
 from textual.containers import Horizontal
 from textual.binding import Binding
 from installer.core import detect_disks
@@ -7,14 +7,14 @@ from installer.ui.sidebar import InstallerScreen
 SWAP_SIZES = [
     ("2 GB (recomendado para 4-8 GB RAM)", "2G"),
     ("4 GB (recomendado para 8-16 GB RAM)", "4G"),
-    ("8 GB (para hibernacao com 8+ GB RAM)", "8G"),
+    ("8 GB (para hibernação com 8+ GB RAM)", "8G"),
     ("Sem swap", "none"),
 ]
 
 
 class PartitionScreen(InstallerScreen):
     STEP_NUMBER = 3
-    STEP_NAME = "Particoes"
+    STEP_NAME = "Partições"
 
     BINDINGS = [
         Binding("escape", "go_back", "Voltar", show=False),
@@ -26,14 +26,14 @@ class PartitionScreen(InstallerScreen):
 
     def compose(self):
         yield from self.compose_with_sidebar(
-            Static("Esquema de particoes", id="header-text"),
+            Static("Esquema de partições", id="header-text"),
             Static(
-                "Escolhe como queres organizar o disco. O modo automatico\n"
+                "Escolhe como queres organizar o disco. O modo automático\n"
                 "cria uma tabela GPT com UEFI ou BIOS boot e particao raiz.",
                 classes="help-text",
             ),
             RadioSet(
-                RadioButton("Automatico (recomendado) - Apaga o disco", id="part-0", value=True),
+                RadioButton("Automático (recomendado) - Apaga o disco", id="part-0", value=True),
                 id="partition-list",
             ),
             Static("Disco de destino:", classes="field-label"),
@@ -45,15 +45,15 @@ class PartitionScreen(InstallerScreen):
             ),
             Static(
                 "NOTA\n"
-                "O particionamento automatico APAGA TODO o disco selecionado.\n"
+                "O particionamento automático APAGA TODO o disco selecionado.\n"
                 "Escreve APAGAR na caixa abaixo para confirmar a destruicao dos dados.",
                 classes="note-box",
             ),
             Input(placeholder="Escreve APAGAR para confirmar...", id="confirm-erase-input"),
             Horizontal(
-                Button("<- Anterior", id="btn-back", variant="default"),
+                Button("← Anterior", id="btn-back", variant="default"),
                 Button("Atualizar Discos", id="btn-refresh", variant="default"),
-                Button("Seguinte ->", id="btn-next", variant="primary"),
+                Button("Seguinte →", id="btn-next", variant="primary"),
                 id="nav-buttons",
             ),
         )

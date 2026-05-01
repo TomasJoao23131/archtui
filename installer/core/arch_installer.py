@@ -49,7 +49,7 @@ class ArchInstaller:
         "xfce": ["xfce4", "xfce4-goodies", "lightdm", "lightdm-gtk-greeter"],
         "mate": ["mate", "mate-extra", "lightdm", "lightdm-gtk-greeter"],
         "cinnamon": ["cinnamon", "lightdm", "lightdm-gtk-greeter"],
-        "budgie": ["budgie", "budgie-desktop-view", "gnome-terminal", "lightdm", "lightdm-gtk-greeter"],
+        "budgie": ["budgie-desktop", "budgie-desktop-view", "gnome-terminal", "lightdm", "lightdm-gtk-greeter"],
         "lxqt": ["lxqt", "breeze-icons", "sddm"],
         "deepin": ["deepin", "deepin-extra", "lightdm", "lightdm-gtk-greeter"],
         "i3": ["i3-wm", "i3status", "i3lock", "dmenu", "alacritty", "xorg-xinit"],
@@ -445,7 +445,6 @@ class ArchInstaller:
         self.log("Instalacao concluida com sucesso!")
         self.log("O sistema sera reiniciado automaticamente em 10 segundos...")
         self.log("(ou clica em 'Reiniciar Agora')")
-        self._should_reboot = True
 
     def _run(self, command: list[str], check: bool = True, input_text: str | None = None) -> None:
         self.log(f"$ {' '.join(command)}")
@@ -461,7 +460,7 @@ class ArchInstaller:
 
     def _chroot(self, command: str, check: bool = True, input_text: str | None = None) -> None:
         if input_text is not None:
-            self._run(["arch-chroot", str(self.mountpoint), command], check=check, input_text=input_text)
+            self._run(["arch-chroot", str(self.mountpoint), "/bin/bash", "-lc", command], check=check, input_text=input_text)
             return
         self._run(["arch-chroot", str(self.mountpoint), "/bin/bash", "-lc", command], check=check)
 
