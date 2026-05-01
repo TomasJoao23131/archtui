@@ -40,9 +40,10 @@ Inicie o computador com a pen drive do **live environment** oficial do Arch Linu
 Basta executar os seguintes comandos:
 
 ```bash
+pacman -Sy --noconfirm git
 git clone https://github.com/TomasJoao23131/archtui.git
 cd archtui
-sudo ./install.sh
+sudo bash install.sh
 ```
 
 ## 📂 Estrutura do Projeto

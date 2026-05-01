@@ -35,9 +35,9 @@ if [[ ! -f "$SCRIPT_DIR/run.py" || ! -f "$SCRIPT_DIR/requirements.txt" ]]; then
     SCRIPT_DIR="$TARGET_DIR"
 fi
 
-# Garantir que Python está instalado
-if ! command -v python >/dev/null 2>&1 && ! command -v python3 >/dev/null 2>&1; then
-    echo "Python não encontrado. A instalar..."
+# Garantir que Python e Pip estão instalados
+if ! command -v python3 >/dev/null 2>&1 || ! python3 -m pip --version >/dev/null 2>&1; then
+    echo "A instalar dependências de sistema (Python e Pip)..."
     pacman -Sy --noconfirm python python-pip
 fi
 
