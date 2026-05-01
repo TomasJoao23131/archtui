@@ -69,6 +69,13 @@ class ArchInstaller:
         "deepin": "lightdm",
     }
 
+    # WMs que arrancam via .bash_profile (sem display manager)
+    WM_LAUNCH_COMMANDS = {
+        "i3": "exec startx",
+        "sway": "exec sway",
+        "hyprland": "exec Hyprland",
+    }
+
     VIDEO_PACKAGES = {
         "auto": ["mesa", "xf86-video-vesa"],
         "intel": ["mesa", "xf86-video-intel"],
@@ -297,9 +304,32 @@ class ArchInstaller:
         self._chroot("chpasswd", input_text=f"root:{root_password}\n")
         self._chroot("chpasswd", input_text=f"{username}:{user_password}\n")
 
-        display_service = self.DISPLAY_SERVICES.get(self.config.get("desktop", "cli"))
+        desktop = self.config.get("desktop", "cli")
+        display_service = self.DISPLAY_SERVICES.get(desktop)
         if display_service:
             self._chroot(f"systemctl enable {shlex.quote(display_service)}")
+        elif desktop in self.WM_LAUNCH_COMMANDS:
+            # WMs sem display manager: auto-start via .bash_profile
+            launch_cmd = self.WM_LAUNCH_COMMANDS[desktop]
+            username = self.config.get("username", "user")
+            profile_path = f"/home/{username}/.bash_profile"
+            existing = self._read_target_file(profile_path)
+            autostart_block = (
+                f"\n# Auto-start {desktop} ao fazer login na tty1\n"
+                f'if [ -z "$DISPLAY" ] && [ "$XDG_VTNR" -eq 1 ]; then\n'
+                f"    {launch_cmd}\n"
+                f"fi\n"
+            )
+            self._write_target_file(profile_path, existing + autostart_block)
+            self._chroot(f"chown {shlex.quote(username)}:{shlex.quote(username)} {profile_path}")
+            # i3 precisa do xorg-server
+            if desktop == "i3":
+                self._chroot("pacman -S --noconfirm xorg-server xorg-xinit", check=False)
+                xinit_content = "exec i3\n"
+                xinitrc_path = f"/home/{username}/.xinitrc"
+                self._write_target_file(xinitrc_path, xinit_content)
+                self._chroot(f"chown {shlex.quote(username)}:{shlex.quote(username)} {xinitrc_path}")
+            self.log(f"{desktop} sera iniciado automaticamente ao fazer login.")
 
         if self.config.get("video_driver") == "vm":
             self._chroot("systemctl enable vmtoolsd", check=False)
@@ -346,7 +376,12 @@ class ArchInstaller:
     def _finalize(self) -> None:
         self.set_status("A finalizar instalacao...", 95)
         self._run(["sync"])
-        self.log("Podes sair, rever `/mnt` ou reiniciar quando quiseres.")
+        # Desmontar partições
+        self._run(["umount", "-R", str(self.mountpoint)], check=False)
+        self.log("Instalacao concluida com sucesso!")
+        self.log("O sistema sera reiniciado automaticamente em 10 segundos...")
+        self.log("(ou clica em 'Reiniciar Agora')")
+        self._should_reboot = True
 
     def _run(self, command: list[str], check: bool = True, input_text: str | None = None) -> None:
         self.log(f"$ {' '.join(command)}")
