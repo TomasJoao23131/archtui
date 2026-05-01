@@ -81,6 +81,29 @@ $red: #f85149;
     background: $surface;
 }
 
+/* --- Keyboard two-panel layout --- */
+#kb-panels {
+    width: 100%;
+    height: auto;
+    min-height: 14;
+}
+
+#kb-left-panel {
+    width: 1fr;
+    height: auto;
+    padding-right: 1;
+}
+
+#kb-right-panel {
+    width: 1fr;
+    height: auto;
+    padding-left: 1;
+}
+
+#variant-container {
+    height: auto;
+}
+
 /* --- Welcome (full width, centered) --- */
 #welcome-screen {
     layout: vertical;
@@ -251,7 +274,9 @@ RadioSet {
     padding: 1;
     margin-bottom: 1;
     height: auto;
+    max-height: 16;
     width: 100%;
+    overflow-y: auto;
 }
 
 RadioSet:focus-within {

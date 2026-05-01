@@ -49,6 +49,12 @@ class ArchInstaller:
         "xfce": ["xfce4", "xfce4-goodies", "lightdm", "lightdm-gtk-greeter"],
         "mate": ["mate", "mate-extra", "lightdm", "lightdm-gtk-greeter"],
         "cinnamon": ["cinnamon", "lightdm", "lightdm-gtk-greeter"],
+        "budgie": ["budgie", "budgie-desktop-view", "gnome-terminal", "lightdm", "lightdm-gtk-greeter"],
+        "lxqt": ["lxqt", "breeze-icons", "sddm"],
+        "deepin": ["deepin", "deepin-extra", "lightdm", "lightdm-gtk-greeter"],
+        "i3": ["i3-wm", "i3status", "i3lock", "dmenu", "alacritty", "xorg-xinit"],
+        "sway": ["sway", "swaylock", "swayidle", "waybar", "wofi", "alacritty"],
+        "hyprland": ["hyprland", "waybar", "wofi", "alacritty", "xdg-desktop-portal-hyprland"],
         "cli": [],
     }
 
@@ -58,6 +64,9 @@ class ArchInstaller:
         "xfce": "lightdm",
         "mate": "lightdm",
         "cinnamon": "lightdm",
+        "budgie": "lightdm",
+        "lxqt": "sddm",
+        "deepin": "lightdm",
     }
 
     VIDEO_PACKAGES = {
@@ -65,6 +74,7 @@ class ArchInstaller:
         "intel": ["mesa", "xf86-video-intel"],
         "amd": ["mesa", "xf86-video-amdgpu"],
         "nvidia": ["nvidia", "nvidia-utils"],
+        "nouveau": ["mesa", "xf86-video-nouveau"],
         "vm": ["xf86-video-vmware", "open-vm-tools"],
     }
 
@@ -72,7 +82,38 @@ class ArchInstaller:
         "pt_BR": ("pt_BR.UTF-8 UTF-8", "pt_BR.UTF-8"),
         "pt_PT": ("pt_PT.UTF-8 UTF-8", "pt_PT.UTF-8"),
         "en_US": ("en_US.UTF-8 UTF-8", "en_US.UTF-8"),
+        "en_GB": ("en_GB.UTF-8 UTF-8", "en_GB.UTF-8"),
         "es_ES": ("es_ES.UTF-8 UTF-8", "es_ES.UTF-8"),
+        "es_MX": ("es_MX.UTF-8 UTF-8", "es_MX.UTF-8"),
+        "es_AR": ("es_AR.UTF-8 UTF-8", "es_AR.UTF-8"),
+        "fr_FR": ("fr_FR.UTF-8 UTF-8", "fr_FR.UTF-8"),
+        "de_DE": ("de_DE.UTF-8 UTF-8", "de_DE.UTF-8"),
+        "it_IT": ("it_IT.UTF-8 UTF-8", "it_IT.UTF-8"),
+        "nl_NL": ("nl_NL.UTF-8 UTF-8", "nl_NL.UTF-8"),
+        "ru_RU": ("ru_RU.UTF-8 UTF-8", "ru_RU.UTF-8"),
+        "ja_JP": ("ja_JP.UTF-8 UTF-8", "ja_JP.UTF-8"),
+        "zh_CN": ("zh_CN.UTF-8 UTF-8", "zh_CN.UTF-8"),
+        "zh_TW": ("zh_TW.UTF-8 UTF-8", "zh_TW.UTF-8"),
+        "ko_KR": ("ko_KR.UTF-8 UTF-8", "ko_KR.UTF-8"),
+        "ar_EG": ("ar_EG.UTF-8 UTF-8", "ar_EG.UTF-8"),
+        "pl_PL": ("pl_PL.UTF-8 UTF-8", "pl_PL.UTF-8"),
+        "cs_CZ": ("cs_CZ.UTF-8 UTF-8", "cs_CZ.UTF-8"),
+        "sv_SE": ("sv_SE.UTF-8 UTF-8", "sv_SE.UTF-8"),
+        "nb_NO": ("nb_NO.UTF-8 UTF-8", "nb_NO.UTF-8"),
+        "da_DK": ("da_DK.UTF-8 UTF-8", "da_DK.UTF-8"),
+        "fi_FI": ("fi_FI.UTF-8 UTF-8", "fi_FI.UTF-8"),
+        "hu_HU": ("hu_HU.UTF-8 UTF-8", "hu_HU.UTF-8"),
+        "ro_RO": ("ro_RO.UTF-8 UTF-8", "ro_RO.UTF-8"),
+        "tr_TR": ("tr_TR.UTF-8 UTF-8", "tr_TR.UTF-8"),
+        "el_GR": ("el_GR.UTF-8 UTF-8", "el_GR.UTF-8"),
+        "uk_UA": ("uk_UA.UTF-8 UTF-8", "uk_UA.UTF-8"),
+        "ca_ES": ("ca_ES.UTF-8 UTF-8", "ca_ES.UTF-8"),
+        "gl_ES": ("gl_ES.UTF-8 UTF-8", "gl_ES.UTF-8"),
+        "eu_ES": ("eu_ES.UTF-8 UTF-8", "eu_ES.UTF-8"),
+        "id_ID": ("id_ID.UTF-8 UTF-8", "id_ID.UTF-8"),
+        "vi_VN": ("vi_VN.UTF-8 UTF-8", "vi_VN.UTF-8"),
+        "th_TH": ("th_TH.UTF-8 UTF-8", "th_TH.UTF-8"),
+        "hi_IN": ("hi_IN.UTF-8 UTF-8", "hi_IN.UTF-8"),
     }
 
     def __init__(self, config: dict):

@@ -10,6 +10,12 @@ DESKTOPS = [
     ("XFCE (leve e rápido, ideal para PCs mais antigos)", "xfce"),
     ("MATE (clássico e estável)", "mate"),
     ("Cinnamon (familiar, estilo Windows)", "cinnamon"),
+    ("Budgie (elegante e simples)", "budgie"),
+    ("LXQt (ultra-leve, para hardware limitado)", "lxqt"),
+    ("Deepin (visual polido, inspirado em macOS)", "deepin"),
+    ("i3 (tiling window manager para utilizadores avançados)", "i3"),
+    ("Sway (tiling WM para Wayland, alternativa ao i3)", "sway"),
+    ("Hyprland (tiling WM Wayland com animações)", "hyprland"),
     ("Apenas CLI (linha de comandos, sem gráficos)", "cli"),
 ]
 
@@ -18,6 +24,7 @@ VIDEO_DRIVERS = [
     ("Intel (gráficos integrados)", "intel"),
     ("AMD (Radeon)", "amd"),
     ("NVIDIA (driver proprietário)", "nvidia"),
+    ("Nouveau (NVIDIA open-source)", "nouveau"),
     ("VMware / VirtualBox (máquina virtual)", "vm"),
 ]
 

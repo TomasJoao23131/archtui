@@ -8,7 +8,38 @@ LANGUAGES = [
     ("Português (Brasil)", "pt_BR"),
     ("Português (Portugal)", "pt_PT"),
     ("English (US)", "en_US"),
-    ("Español", "es_ES"),
+    ("English (UK)", "en_GB"),
+    ("Español (España)", "es_ES"),
+    ("Español (México)", "es_MX"),
+    ("Español (Argentina)", "es_AR"),
+    ("Français (France)", "fr_FR"),
+    ("Deutsch (Deutschland)", "de_DE"),
+    ("Italiano (Italia)", "it_IT"),
+    ("Nederlands (Nederland)", "nl_NL"),
+    ("Русский (Россия)", "ru_RU"),
+    ("日本語 (日本)", "ja_JP"),
+    ("中文 (简体, 中国)", "zh_CN"),
+    ("中文 (繁體, 台灣)", "zh_TW"),
+    ("한국어 (대한민국)", "ko_KR"),
+    ("العربية (مصر)", "ar_EG"),
+    ("Polski (Polska)", "pl_PL"),
+    ("Čeština (Česko)", "cs_CZ"),
+    ("Svenska (Sverige)", "sv_SE"),
+    ("Norsk bokmål (Norge)", "nb_NO"),
+    ("Dansk (Danmark)", "da_DK"),
+    ("Suomi (Suomi)", "fi_FI"),
+    ("Magyar (Magyarország)", "hu_HU"),
+    ("Română (România)", "ro_RO"),
+    ("Türkçe (Türkiye)", "tr_TR"),
+    ("Ελληνικά (Ελλάδα)", "el_GR"),
+    ("Українська (Україна)", "uk_UA"),
+    ("Català (Catalunya)", "ca_ES"),
+    ("Galego (Galiza)", "gl_ES"),
+    ("Euskara (Euskal Herria)", "eu_ES"),
+    ("Bahasa Indonesia", "id_ID"),
+    ("Tiếng Việt (Việt Nam)", "vi_VN"),
+    ("ภาษาไทย (ประเทศไทย)", "th_TH"),
+    ("हिन्दी (भारत)", "hi_IN"),
 ]
 
 
@@ -40,7 +71,6 @@ class LanguageScreen(InstallerScreen):
         )
 
     def on_mount(self):
-        # Selecionar o primeiro por defeito
         self.query_one("#lang-0", RadioButton).value = True
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
