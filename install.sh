@@ -12,7 +12,13 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+# Fallback para quando o script é corrido via pipe (curl | bash)
+SCRIPT_FILE="${BASH_SOURCE[0]:-}"
+if [[ -n "$SCRIPT_FILE" ]]; then
+    SCRIPT_DIR="$(cd -- "$(dirname -- "$SCRIPT_FILE")" && pwd)"
+else
+    SCRIPT_DIR="$PWD"
+fi
 TARGET_DIR="${ARCHTUI_TARGET_DIR:-/opt/archtui}"
 
 # Se não estamos dentro do repositório clonado, obtê-lo
