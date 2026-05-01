@@ -37,14 +37,8 @@ Em **9 passos simples**, ele configura e instala o Arch Linux no seu computador,
 
 Inicie o computador com a pen drive do **live environment** oficial do Arch Linux. Assim que o terminal abrir, execute um dos métodos abaixo:
 
-### Método 1: Download Rápido (Recomendado)
-Faça o download do script e execute diretamente:
-```bash
-curl -sL https://raw.githubusercontent.com/TomasJoao23131/archtui/main/install.sh | sudo ARCHTUI_REPO_URL=https://github.com/TomasJoao23131/archtui.git bash
-```
+Basta executar os seguintes comandos:
 
-### Método 2: Clonar o Repositório Manualmente
-Se preferir, pode clonar e inspecionar o código antes de executar:
 ```bash
 git clone https://github.com/TomasJoao23131/archtui.git
 cd archtui
