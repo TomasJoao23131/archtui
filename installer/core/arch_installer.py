@@ -163,10 +163,15 @@ class ArchInstaller:
             self.status = f"Erro: {exc}"
             self.log(self.status)
         finally:
+            self._run(["swapoff", "-a"], check=False)
+            self._run(["umount", "-R", str(self.mountpoint)], check=False)
             self.finished = True
 
     def _validate(self) -> None:
         self.set_status("A validar ambiente liveboot...", 5)
+        # Validar ligacao a internet para prevenir falhas fatais no pacstrap e perda de dados do utilizador
+        if subprocess.run(["ping", "-c", "1", "archlinux.org"], check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode != 0:
+            raise ArchInstallError("Sem ligacao a Internet. Aborta para nao danificar o sistema atual.")
         geteuid = getattr(os, "geteuid", None)
         if geteuid is None or geteuid() != 0:
             raise ArchInstallError("A instalacao real precisa de correr como root.")
@@ -227,6 +232,7 @@ class ArchInstaller:
             self._run(["btrfs", "subvolume", "create", f"{self.mountpoint}/@log"])
             self._run(["btrfs", "subvolume", "create", f"{self.mountpoint}/@pkg"])
             self._run(["btrfs", "subvolume", "create", f"{self.mountpoint}/@snapshots"])
+            self._run(["btrfs", "subvolume", "create", f"{self.mountpoint}/@swap"])
             self._run(["umount", str(self.mountpoint)])
             
             # Mount subvolumes
@@ -240,6 +246,8 @@ class ArchInstaller:
             self._run(["mount", "-o", f"{mount_opts},subvol=@pkg", self.root_partition, str(self.mountpoint / "var/cache/pacman/pkg")])
             (self.mountpoint / ".snapshots").mkdir(parents=True, exist_ok=True)
             self._run(["mount", "-o", f"{mount_opts},subvol=@snapshots", self.root_partition, str(self.mountpoint / ".snapshots")])
+            (self.mountpoint / "swap").mkdir(parents=True, exist_ok=True)
+            self._run(["mount", "-o", f"{mount_opts},subvol=@swap", self.root_partition, str(self.mountpoint / "swap")])
         else:
             self._run(["mkfs.ext4", "-F", self.root_partition])
             self.mountpoint.mkdir(parents=True, exist_ok=True)
@@ -263,6 +271,7 @@ class ArchInstaller:
         
         fs = self.config.get("filesystem", "ext4")
         if fs == "btrfs":
+            swapfile = self.mountpoint / "swap/swapfile"
             # btrfs requer tratamento especial (chattr +C, no COW). O btrfs-progs trata disso.
             self._run(["btrfs", "filesystem", "mkswapfile", "--size", swap_size, str(swapfile)])
         else:
@@ -326,8 +335,18 @@ class ArchInstaller:
             if desktop == "i3":
                 packages.extend(["lightdm", "lightdm-gtk-greeter"])
             else:
-                packages.extend(["sddm"])
+                packages.extend(["sddm", "qt5-wayland", "qt6-wayland"])
                 
+        # Deteção de CPU (via /proc/cpuinfo) e injeção do microcode correto
+        try:
+            cpuinfo = Path("/proc/cpuinfo").read_text()
+            if "AuthenticAMD" in cpuinfo:
+                packages.append("amd-ucode")
+            elif "GenuineIntel" in cpuinfo:
+                packages.append("intel-ucode")
+        except FileNotFoundError:
+            pass
+
         packages.extend(self.VIDEO_PACKAGES.get(self.config.get("video_driver", "auto"), []))
         packages.extend(self._bootloader_packages())
         packages.extend(["linux-firmware", "networkmanager", "sudo"])
@@ -391,6 +410,14 @@ class ArchInstaller:
             xkb_conf += f'    Option "XkbVariant" "{xkb_variant}"\n'
         xkb_conf += "EndSection\n"
         self._write_target_file("/etc/X11/xorg.conf.d/00-keyboard.conf", xkb_conf)
+        
+        # O Wayland (Sway) ignora xorg.conf. Vamos configurar um config system-wide para Sway.
+        sway_kb_conf = f'input * {{\n    xkb_layout "{xkb_layout}"\n'
+        if xkb_variant:
+            sway_kb_conf += f'    xkb_variant "{xkb_variant}"\n'
+        sway_kb_conf += '}\n'
+        self._write_target_file("/etc/sway/config.d/00-keyboard.conf", sway_kb_conf)
+        
         self.log(f"Teclado configurado: {xkb_layout}" + (f" ({xkb_variant})" if xkb_variant else ""))
         self._write_target_file("/etc/hostname", f"{hostname}\n")
         self._write_target_file(
@@ -508,17 +535,22 @@ class ArchInstaller:
                 "/boot/loader/loader.conf",
                 "default arch.conf\ntimeout 3\neditor no\n",
             )
+            options = f"root=UUID={root_uuid} rw"
+            if self.config.get("filesystem") == "btrfs":
+                options += " rootflags=subvol=@"
+                
+            entries = ["title   Arch Linux", f"linux   /vmlinuz-{kernel}"]
+            if (self.mountpoint / "boot/amd-ucode.img").exists():
+                entries.append("initrd  /amd-ucode.img")
+            if (self.mountpoint / "boot/intel-ucode.img").exists():
+                entries.append("initrd  /intel-ucode.img")
+            entries.append(f"initrd  /initramfs-{kernel}.img")
+            entries.append(f"options {options}")
+            entries.append("")
+
             self._write_target_file(
                 "/boot/loader/entries/arch.conf",
-                "\n".join(
-                    [
-                        "title   Arch Linux",
-                        f"linux   /vmlinuz-{kernel}",
-                        f"initrd  /initramfs-{kernel}.img",
-                        f"options root=UUID={root_uuid} rw",
-                        "",
-                    ]
-                ),
+                "\n".join(entries),
             )
             return
 

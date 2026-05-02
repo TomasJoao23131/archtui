@@ -1,6 +1,6 @@
 import os
 from installer.__version__ import __version__
-from textual.containers import Container
+from textual.containers import Container, ScrollableContainer
 from textual.reactive import reactive
 from textual.screen import Screen
 from textual.widgets import OptionList, RadioSet, SelectionList, Static
@@ -99,7 +99,7 @@ class InstallerScreen(Screen):
         host = _get_hostname()
         yield Static(f" ArchTUI v{__version__} — root@{host}", id="header-bar")
         yield Sidebar(step=self.STEP_NUMBER, id="sidebar")
-        yield Container(
+        yield ScrollableContainer(
             *content_widgets,
             Static(
                 "[Tab] navegar  [Enter] selecionar",
