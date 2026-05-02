@@ -498,6 +498,13 @@ class ArchInstaller:
         if self.config.get("video_driver") == "vm":
             self._chroot("systemctl enable vmtoolsd", check=False)
 
+        # Injetar variáveis de ambiente críticas para estabilidade Wayland (VMs, NVIDIA, drivers legacy)
+        if desktop in ("sway", "hyprland"):
+            env_content = self._read_target_file("/etc/environment")
+            if "WLR_NO_HARDWARE_CURSORS" not in env_content:
+                env_add = "\n# Wayland / VM Compatibility\nWLR_NO_HARDWARE_CURSORS=1\nWLR_RENDERER_ALLOW_SOFTWARE=1\n"
+                self._write_target_file("/etc/environment", env_content + env_add)
+
         # Install AUR Helper
         aur_helpers = [pkg for pkg in self.config.get("extra_packages", []) if pkg.startswith("aur_")]
         if aur_helpers:
@@ -519,7 +526,19 @@ class ArchInstaller:
         self.set_status("A instalar bootloader...", 85)
         bootloader = self.config.get("bootloader", "grub")
         disk = self.config["disk"]
+        
+        # Parâmetros de kernel extras dependentes do hardware
+        kernel_opts = ""
+        if self.config.get("video_driver") == "nvidia":
+            kernel_opts += " nvidia-drm.modeset=1"
+
         if bootloader == "grub":
+            if kernel_opts:
+                grub_conf = self._read_target_file("/etc/default/grub")
+                # Injetar parametros no grub config padrao
+                grub_conf = grub_conf.replace('GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quiet"', f'GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quiet{kernel_opts}"')
+                self._write_target_file("/etc/default/grub", grub_conf)
+                
             if self._is_uefi():
                 self._chroot("grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=ArchTUI")
             else:
@@ -536,6 +555,8 @@ class ArchInstaller:
                 "default arch.conf\ntimeout 3\neditor no\n",
             )
             options = f"root=UUID={root_uuid} rw"
+            if kernel_opts:
+                options += kernel_opts
             if self.config.get("filesystem") == "btrfs":
                 options += " rootflags=subvol=@"
                 
