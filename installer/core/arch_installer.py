@@ -260,11 +260,18 @@ class ArchInstaller:
             return
         self.set_status(f"A criar swapfile de {swap_size}...", 35)
         swapfile = self.mountpoint / "swapfile"
-        # Criar ficheiro de swap com o tamanho pedido
-        self._run(["dd", "if=/dev/zero", f"of={swapfile}", "bs=1M",
-                   f"count={self._swap_size_mb(swap_size)}", "status=none"])
-        self._run(["chmod", "600", str(swapfile)])
-        self._run(["mkswap", str(swapfile)])
+        
+        fs = self.config.get("filesystem", "ext4")
+        if fs == "btrfs":
+            # btrfs requer tratamento especial (chattr +C, no COW). O btrfs-progs trata disso.
+            self._run(["btrfs", "filesystem", "mkswapfile", "--size", swap_size, str(swapfile)])
+        else:
+            # Criar ficheiro de swap padrao para ext4
+            self._run(["dd", "if=/dev/zero", f"of={swapfile}", "bs=1M",
+                       f"count={self._swap_size_mb(swap_size)}", "status=none"])
+            self._run(["chmod", "600", str(swapfile)])
+            self._run(["mkswap", str(swapfile)])
+            
         self._run(["swapon", str(swapfile)])
         self.log(f"Swapfile de {swap_size} criado e ativado.")
 

@@ -35,15 +35,23 @@ Em **9 passos simples**, ele configura e instala o Arch Linux no seu computador,
 
 ## 🚀 Instalação e Uso
 
-Inicie o computador com a pen drive do **live environment** oficial do Arch Linux. Assim que o terminal abrir, execute um dos métodos abaixo:
+Inicie o computador com a pen drive do **live environment** oficial do Arch Linux. 
 
-Basta executar os seguintes comandos:
+⚠️ **Atenção:** É necessária uma ligação à Internet ativa para descarregar o instalador. 
+Se estiver a usar Wi-Fi, conecte-se primeiro executando o utilitário `iwctl`:
+1. `iwctl` (para entrar na ferramenta)
+2. `station wlan0 scan` (procurar redes)
+3. `station wlan0 get-networks` (listar redes)
+4. `station wlan0 connect NOME_DA_REDE` (ligar à rede)
+5. `exit` (para sair)
+
+Assim que o terminal abrir e estiver ligado à Internet, execute os seguintes comandos:
 
 ```bash
 pacman -Sy --noconfirm git
 git clone https://github.com/TomasJoao23131/archtui.git
 cd archtui
-sudo bash install.sh
+bash install.sh  # (O sudo não é necessário no live USB, já é root)
 ```
 
 ## 📂 Estrutura do Projeto
@@ -85,8 +93,10 @@ Caso queira testar a interface num sistema já instalado (modo simulação/teste
 | Tecla / Ação | Função |
 |-------------|--------|
 | `↑` / `↓`   | Navegar entre opções numa lista |
+| `Espaço`    | Marcar/desmarcar opções (ex: Checkboxes) |
+| `Tab`       | Saltar para o campo seguinte no ecrã |
+| `Shift+Tab` | Voltar ao campo anterior no ecrã |
 | `Enter`     | Confirmar seleção atual |
-| `Tab`       | Saltar entre os diferentes campos no ecrã |
 | `q`         | Cancelar e sair do instalador |
 
 
