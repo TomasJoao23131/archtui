@@ -1,4 +1,4 @@
-from textual.widgets import Static, Button, RadioSet, RadioButton
+from textual.widgets import Static, Button, RadioSet, RadioButton, Checkbox
 from textual.containers import Horizontal
 from textual.binding import Binding
 from installer.ui.sidebar import InstallerScreen
@@ -46,6 +46,7 @@ class DesktopScreen(InstallerScreen):
                 *[RadioButton(d[0], id=f"desk-{i}") for i, d in enumerate(DESKTOPS)],
                 id="desktop-list",
             ),
+            Checkbox("Usar Ecrã de Login Gráfico (SDDM/LightDM) para i3, Sway ou Hyprland", id="dm-checkbox", value=True),
             Static("Driver de vídeo:", classes="field-label"),
             RadioSet(
                 *[RadioButton(v[0], id=f"vid-{i}") for i, v in enumerate(VIDEO_DRIVERS)],
@@ -66,8 +67,13 @@ class DesktopScreen(InstallerScreen):
         if event.button.id == "btn-next":
             d_idx = self.get_radio_index("#desktop-list")
             v_idx = self.get_radio_index("#video-driver-list")
+            try:
+                use_dm = self.query_one("#dm-checkbox", Checkbox).value
+            except Exception:
+                use_dm = False
             self.app.config["desktop"] = DESKTOPS[d_idx][1]
             self.app.config["video_driver"] = VIDEO_DRIVERS[v_idx][1]
+            self.app.config["use_dm"] = use_dm
             self.go_next("summary")
         elif event.button.id == "btn-back":
             self.go_back("user")

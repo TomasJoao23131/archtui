@@ -51,7 +51,7 @@ Assim que o terminal abrir e estiver ligado à Internet, execute os seguintes co
 pacman -Sy --noconfirm git
 git clone https://github.com/TomasJoao23131/archtui.git
 cd archtui
-bash install.sh  # (O sudo não é necessário no live USB, já é root)
+bash install.sh
 ```
 
 ## 📂 Estrutura do Projeto

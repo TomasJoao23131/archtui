@@ -317,7 +317,17 @@ class ArchInstaller:
         for extra in self.config.get("extra_packages", []):
             if not extra.startswith("aur_"):
                 packages.extend(extra.split())
-        packages.extend(self.DESKTOP_PACKAGES.get(self.config.get("desktop", "cli"), []))
+                
+        desktop = self.config.get("desktop", "cli")
+        packages.extend(self.DESKTOP_PACKAGES.get(desktop, []))
+        
+        # Injetar pacotes de DM se o utilizador escolheu usar DM num Window Manager
+        if self.config.get("use_dm", True) and desktop in self.WM_LAUNCH_COMMANDS:
+            if desktop == "i3":
+                packages.extend(["lightdm", "lightdm-gtk-greeter"])
+            else:
+                packages.extend(["sddm"])
+                
         packages.extend(self.VIDEO_PACKAGES.get(self.config.get("video_driver", "auto"), []))
         packages.extend(self._bootloader_packages())
         packages.extend(["linux-firmware", "networkmanager", "sudo"])
@@ -419,22 +429,36 @@ class ArchInstaller:
 
         desktop = self.config.get("desktop", "cli")
         display_service = self.DISPLAY_SERVICES.get(desktop)
+        
+        # Sobrescrever display_service se o user pediu DM num Window Manager
+        if self.config.get("use_dm", True) and desktop in self.WM_LAUNCH_COMMANDS:
+            display_service = "lightdm" if desktop == "i3" else "sddm"
+
         if display_service:
             self._chroot(f"systemctl enable {shlex.quote(display_service)}")
         elif desktop in self.WM_LAUNCH_COMMANDS:
-            # WMs sem display manager: auto-start via .bash_profile
+            # WMs sem display manager: auto-start via TTY login
             launch_cmd = self.WM_LAUNCH_COMMANDS[desktop]
             username = self.config.get("username", "user")
-            profile_path = f"/home/{username}/.bash_profile"
-            existing = self._read_target_file(profile_path)
-            autostart_block = (
-                f"\n# Auto-start {desktop} ao fazer login na tty1\n"
-                f'if [ -z "$DISPLAY" ] && [ "$XDG_VTNR" -eq 1 ]; then\n'
-                f"    {launch_cmd}\n"
-                f"fi\n"
-            )
-            self._write_target_file(profile_path, existing + autostart_block)
-            self._chroot(f"chown {shlex.quote(username)}:{shlex.quote(username)} {profile_path}")
+            
+            # Para Bash
+            bash_profile = f"/home/{username}/.bash_profile"
+            bash_code = f'\n# Auto-start {desktop}\nif [ -z "$DISPLAY" ] && [ "$XDG_VTNR" -eq 1 ]; then\n    {launch_cmd}\nfi\n'
+            self._write_target_file(bash_profile, self._read_target_file(bash_profile) + bash_code)
+            self._chroot(f"chown {shlex.quote(username)}:{shlex.quote(username)} {bash_profile}")
+            
+            # Para Zsh
+            zsh_profile = f"/home/{username}/.zprofile"
+            self._write_target_file(zsh_profile, self._read_target_file(zsh_profile) + bash_code)
+            self._chroot(f"chown {shlex.quote(username)}:{shlex.quote(username)} {zsh_profile}")
+            
+            # Para Fish
+            fish_dir = f"/home/{username}/.config/fish"
+            fish_conf = f"{fish_dir}/config.fish"
+            fish_code = f'\n# Auto-start {desktop}\nif status is-login\n    if test -z "$DISPLAY" -a "$XDG_VTNR" = 1\n        {launch_cmd}\n    end\nend\n'
+            self._chroot(f"mkdir -p {fish_dir}", check=False)
+            self._write_target_file(fish_conf, self._read_target_file(fish_conf) + fish_code)
+            self._chroot(f"chown -R {shlex.quote(username)}:{shlex.quote(username)} /home/{username}/.config", check=False)
             # i3 precisa do xorg-server
             if desktop == "i3":
                 self._chroot("pacman -S --noconfirm xorg-server xorg-xinit", check=False)
