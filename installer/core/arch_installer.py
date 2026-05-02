@@ -226,7 +226,7 @@ class ArchInstaller:
         if fs == "btrfs":
             self._run(["mkfs.btrfs", "-f", self.root_partition])
             self.mountpoint.mkdir(parents=True, exist_ok=True)
-            self._run(["mount", self.root_partition, str(self.mountpoint)])
+            self._run(["mount", "-t", "btrfs", self.root_partition, str(self.mountpoint)])
             self._run(["btrfs", "subvolume", "create", f"{self.mountpoint}/@"])
             self._run(["btrfs", "subvolume", "create", f"{self.mountpoint}/@home"])
             self._run(["btrfs", "subvolume", "create", f"{self.mountpoint}/@log"])
@@ -251,12 +251,12 @@ class ArchInstaller:
         else:
             self._run(["mkfs.ext4", "-F", self.root_partition])
             self.mountpoint.mkdir(parents=True, exist_ok=True)
-            self._run(["mount", self.root_partition, str(self.mountpoint)])
+            self._run(["mount", "-t", "ext4", self.root_partition, str(self.mountpoint)])
         if self._is_uefi():
             self._run(["mkfs.fat", "-F32", self.efi_partition])
             boot_path = self.mountpoint / "boot"
             boot_path.mkdir(parents=True, exist_ok=True)
-            self._run(["mount", self.efi_partition, str(boot_path)])
+            self._run(["mount", "-t", "vfat", self.efi_partition, str(boot_path)])
 
     def _create_swap(self) -> None:
         swap_size = self.config.get("swap_size", "2G")
