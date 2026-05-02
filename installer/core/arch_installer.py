@@ -82,7 +82,7 @@ class ArchInstaller:
         "amd": ["mesa", "xf86-video-amdgpu"],
         "nvidia": ["nvidia", "nvidia-utils"],
         "nouveau": ["mesa", "xf86-video-nouveau"],
-        "vm": ["xf86-video-vmware", "open-vm-tools"],
+        "vm": ["mesa", "xf86-video-vmware", "open-vm-tools"],
     }
 
     LOCALE_MAP = {
@@ -504,6 +504,21 @@ class ArchInstaller:
             if "WLR_NO_HARDWARE_CURSORS" not in env_content:
                 env_add = "\n# Wayland / VM Compatibility\nWLR_NO_HARDWARE_CURSORS=1\nWLR_RENDERER_ALLOW_SOFTWARE=1\n"
                 self._write_target_file("/etc/environment", env_content + env_add)
+            
+            # SDDM e outros DMs ignoram muitas vezes o /etc/environment nas sessoes Wayland.
+            # Injetar diretamente na execucao do .desktop:
+            if desktop == "hyprland":
+                desktop_file = "/usr/share/wayland-sessions/hyprland.desktop"
+                content = self._read_target_file(desktop_file)
+                if content:
+                    content = content.replace("Exec=Hyprland", "Exec=env WLR_NO_HARDWARE_CURSORS=1 WLR_RENDERER_ALLOW_SOFTWARE=1 Hyprland")
+                    self._write_target_file(desktop_file, content)
+            elif desktop == "sway":
+                desktop_file = "/usr/share/wayland-sessions/sway.desktop"
+                content = self._read_target_file(desktop_file)
+                if content:
+                    content = content.replace("Exec=sway", "Exec=env WLR_NO_HARDWARE_CURSORS=1 WLR_RENDERER_ALLOW_SOFTWARE=1 sway")
+                    self._write_target_file(desktop_file, content)
 
         # Install AUR Helper
         aur_helpers = [pkg for pkg in self.config.get("extra_packages", []) if pkg.startswith("aur_")]
